@@ -1,0 +1,30 @@
+{
+    "name": "tastaturberuf/contao-datacontainer-accessor",
+    "description": "Access the Contao data container array in a modern way.",
+    "type": "library",
+    "license": "LGPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "Tastaturberuf\\ContaoDataContainerAccessor\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tastaturberuf\\ContaoDataContainerAccessor\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Tastaturberuf",
+            "email": "mail@tastaturberuf.de"
+        }
+    ],
+    "require": {
+        "php": "^8.4"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "phpunit/phpunit": "^11.0",
+        "kint-php/kint": "^6.0"
+    }
+}
