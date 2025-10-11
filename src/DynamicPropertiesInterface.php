@@ -22,4 +22,11 @@ abstract class DynamicPropertiesInterface
         return $this;
     }
 
+    public function unset(string $name): static
+    {
+        $this->__unset($name);
+
+        return $this;
+    }
+
 }

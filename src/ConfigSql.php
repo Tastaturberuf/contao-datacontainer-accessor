@@ -56,9 +56,11 @@ final class ConfigSql extends DynamicPropertiesInterface
     /**
      * Allows you to define primary keys and indexes for your fields.
      * @see https://docs.contao.org/dev/reference/dca/config/#sql-keys-and-indexes
+     * @todo find a nice way to add and remove keys e.g. by using a method like `add()`, `has()` and `remove()`. Maybe with ArrayOffsets.
+     *
      */
-    public array $keys {
-        get => $this->__get('keys') ?? [];
+    public ?array $keys {
+        get => $this->__get('keys');
         set {
             $this->__set('keys', $value);
         }
