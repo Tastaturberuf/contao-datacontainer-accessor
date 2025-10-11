@@ -22,7 +22,12 @@ abstract class DynamicPropertiesInterface
         return $this;
     }
 
-    public function unset(string $name): static
+    public function isset(string $name): bool
+    {
+        return $this->__isset($name);
+    }
+
+    public function unset(string $name): self
     {
         $this->__unset($name);
 
