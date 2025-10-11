@@ -53,6 +53,16 @@ final class FieldBag
         return isset($GLOBALS['TL_DCA'][$this->table]['fields'][$name]);
     }
 
+    public function remove(string|BackedEnum $name): void
+    {
+        $name = $this->parseFieldName($name);
+
+        unset($GLOBALS['TL_DCA'][$this->table]['fields'][$name]);
+    }
+
+    /**
+     * Copy a field from another table and optionally rename it.
+     */
     public function copy(string $table, string|BackedEnum $name, null|string|BackedEnum $newName = null, null|callable|array $callback = null): Field
     {
         $name = $this->parseFieldName($name);
@@ -84,6 +94,9 @@ final class FieldBag
         return $field;
     }
 
+    /**
+     * Copy a field from the same table and rename it.
+     */
     public function duplicate(string|BackedEnum $name, string|BackedEnum $newName, null|callable|array $callback = null): Field
     {
         return $this->copy($this->table, $name, $newName, $callback);
