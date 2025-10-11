@@ -9,6 +9,7 @@ final class Listing extends DynamicPropertiesInterface
 
     public readonly Sorting $sorting;
     public readonly Label $label;
+
     public mixed $globalOperations {
         get => $GLOBALS['TL_DCA'][$this->table]['list']['global_operations'] ?? null;
         set {
