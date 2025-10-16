@@ -4,294 +4,642 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor\Tests;
 
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Metadata\Covers;
 use Tastaturberuf\ContaoDataContainerAccessor\CallbackBag;
 use Tastaturberuf\ContaoDataContainerAccessor\Config;
+use Tastaturberuf\ContaoDataContainerAccessor\ConfigCallbacks;
 use Tastaturberuf\ContaoDataContainerAccessor\ConfigSql;
 
-#[RunTestsInSeparateProcesses]
 class ConfigTest extends TestCase
 {
-    use AssertPropertyHooksAndMethods;
+
+    protected function setUp(): void
+    {
+        unset($GLOBALS['TL_DCA']['tl_test']['config']);
+    }
 
     public function testCanInstantiate(): void
     {
         $class = new Config('tl_test');
 
-        static::assertInstanceOf(Config::class, $class);
+        self::assertInstanceOf(Config::class, $class);
     }
 
-    public function testLabel(): void
+    public static function dataProviderNull(): array
+    {
+        return [
+            'null' => [null],
+        ];
+    }
+
+    public static function dataProviderBool(): array
+    {
+        return [
+            'true' => [true],
+            'false' => [false],
+        ];
+    }
+
+    public static function dataProviderInt(): array
+    {
+        return [
+            'integer 0' => [0],
+            'positive integer' => [1],
+            'negative integer' => [-1],
+            'max integer' => [PHP_INT_MAX],
+            'min integer' => [PHP_INT_MIN],
+        ];
+    }
+
+    public static function dataProviderString(): array
+    {
+        return [
+            'empty string' => [''],
+            'string' => ['string'],
+        ];
+    }
+
+    public static function dataProviderArray(): array
+    {
+        return [
+            'empty array' => [[]],
+            'single list array' => [['value']],
+            'list array' => [['value1', 'value2']],
+            'single associative array' => [['key' => 'value']],
+            'associative array' => [['key1' => 'value1', 'key2' => 'value2']],
+            'multidimensional array' => [['key' => ['value']]],
+        ];
+    }
+
+    public static function dataProviderObject(): array
+    {
+        return [
+            'object stdClass' => [new \stdClass()],
+            'object DateTime' => [new \DateTime()],
+        ];
+    }
+
+    public static function dataProviderResource(): array
+    {
+        return [
+            'resource' => [fopen('php://memory', 'rb')],
+        ];
+    }
+
+    public static function dataProviderCallable(): array
+    {
+        return [
+            'closure' => [fn() => true],
+            'static closure' => [static fn() => true],
+            'instance callable' => [new class {
+                public function __invoke(): bool
+                {
+                    return true;
+                }
+            }],
+        ];
+    }
+
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testLabelProperty(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('label', $config);
-        $this->assertObjectPropertyHookAcceptString('label', $config);
+        $config->label = $value;
 
-        $this->assertObjectMethodAcceptNull('label', $config);
-        $this->assertObjectMethodAcceptString('label', $config);
+        self::assertSame($value, $config->label);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['label']);
     }
 
-    public function testPtable(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testLabelMethod(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('ptable', $config);
-        $this->assertObjectPropertyHookAcceptString('ptable', $config);
+        $returned = $config->label($value);
 
-        $this->assertObjectMethodAcceptNull('ptable', $config);
-        $this->assertObjectMethodAcceptString('ptable', $config);
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->label);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['label']);
     }
 
-    public function testDynamicPtable(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testPtableProperty(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('dynamicPtable', $config);
-        $this->assertObjectPropertyHookAcceptBool('dynamicPtable', $config);
+        $config->ptable = $value;
 
-        $this->assertObjectMethodAcceptBool('dynamicPtable', $config);
-        $this->assertObjectMethodDeclineNull('dynamicPtable', $config);
+        self::assertSame($value, $config->ptable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
     }
 
-    public function testCtable(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testPtableMethod(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('ctable', $config);
-        $this->assertObjectPropertyHookAcceptArray('ctable', $config);
+        $returned = $config->ptable($value);
 
-        $this->assertObjectMethodAcceptNull('ctable', $config);
-        $this->assertObjectMethodAcceptArray('ctable', $config);
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->ptable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
     }
 
-    public function testDataContainer(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderBool')]
+    public function testDynamicPtableProperty(?bool $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('dataContainer', $config);
-        $this->assertObjectPropertyHookAcceptString('dataContainer', $config);
+        $config->dynamicPtable = $value;
 
-        $this->assertObjectMethodAcceptNull('dataContainer', $config);
-        $this->assertObjectMethodAcceptString('dataContainer', $config);
+        self::assertSame($value, $config->dynamicPtable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicPtable']);
     }
 
-    public function testMarkAsCopy(): void
+    #[DataProvider('dataProviderBool')]
+    public function testDynamicPtableMethod(bool $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('markAsCopy', $config);
-        $this->assertObjectPropertyHookAcceptString('markAsCopy', $config);
+        $returned = $config->dynamicPtable($value);
 
-        $this->assertObjectMethodAcceptNull('markAsCopy', $config);
-        $this->assertObjectMethodAcceptString('markAsCopy', $config);
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->dynamicPtable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicPtable']);
     }
 
-    public function testUploadPath(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderArray')]
+    public function testCtableProperty(?array $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('uploadPath', $config);
-        $this->assertObjectPropertyHookAcceptString('uploadPath', $config);
+        $config->ctable = $value;
 
-        $this->assertObjectMethodAcceptNull('uploadPath', $config);
-        $this->assertObjectMethodAcceptString('uploadPath', $config);
+        self::assertSame($value, $config->ctable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ctable']);
     }
 
-    public function testValidFileTypes(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderArray')]
+    public function testCtableMethod(?array $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('validFileTypes', $config);
-        $this->assertObjectPropertyHookAcceptString('validFileTypes', $config);
+        $retuned = $config->ctable($value);
+
+        self::assertSame($config, $retuned);
+        self::assertSame($value, $config->ctable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ctable']);
     }
 
-    public function testEditableFileTypes(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testDataContainerProperty(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('editableFileTypes', $config);
-        $this->assertObjectPropertyHookAcceptString('editableFileTypes', $config);
+        $config->dataContainer = $value;
 
-        $this->assertObjectMethodAcceptNull('editableFileTypes', $config);
-        $this->assertObjectMethodAcceptString('editableFileTypes', $config);
+        self::assertSame($value, $config->dataContainer);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dataContainer']);
     }
 
-    public function testDatabaseAssisted(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testDataContainerMethod(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('databaseAssisted', $config);
-        $this->assertObjectPropertyHookAcceptBool('databaseAssisted', $config);
+        $retuned = $config->dataContainer($value);
 
-        $this->assertObjectMethodAcceptBool('databaseAssisted', $config);
-        $this->assertObjectMethodDeclineNull('databaseAssisted', $config);
+        self::assertSame($config, $retuned);
+        self::assertSame($value, $config->dataContainer);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dataContainer']);
     }
 
-    public function testClosed(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testMarkAsCopyProperty(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('closed', $config);
-        $this->assertObjectPropertyHookAcceptBool('closed', $config);
+        $config->markAsCopy = $value;
 
-        $this->assertObjectMethodAcceptBool('closed', $config);
-        $this->assertObjectMethodDeclineNull('closed', $config);
+        self::assertSame($value, $config->markAsCopy);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['markAsCopy']);
     }
 
-    public function testNotEditable(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testMarkAsCopyMethod(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('notEditable', $config);
-        $this->assertObjectPropertyHookAcceptBool('notEditable', $config);
+        $returned = $config->markAsCopy($value);
 
-        $this->assertObjectMethodAcceptBool('notEditable', $config);
-        $this->assertObjectMethodDeclineNull('notEditable', $config);
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->markAsCopy);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['markAsCopy']);
     }
 
-    public function testNotDeletable(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testUploadPathProperty(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('notDeletable', $config);
-        $this->assertObjectPropertyHookAcceptBool('notDeletable', $config);
+        $config->uploadPath = $value;
 
-        $this->assertObjectMethodAcceptBool('notDeletable', $config);
-        $this->assertObjectMethodDeclineNull('notDeletable', $config);
+        self::assertSame($value, $config->uploadPath);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['uploadPath']);
     }
 
-    public function testNotSortable(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testUploadPathMethod(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('notSortable', $config);
-        $this->assertObjectPropertyHookAcceptBool('notSortable', $config);
+        $returned = $config->uploadPath($value);
 
-        $this->assertObjectMethodAcceptBool('notSortable', $config);
-        $this->assertObjectMethodDeclineNull('notSortable', $config);
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->uploadPath);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['uploadPath']);
     }
 
-    public function testNotCopyable(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testValidFileTypesProperty(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('notCopyable', $config);
-        $this->assertObjectPropertyHookAcceptBool('notCopyable', $config);
+        $config->validFileTypes = $value;
 
-        $this->assertObjectMethodAcceptBool('notCopyable', $config);
-        $this->assertObjectMethodDeclineNull('notCopyable', $config);
+        self::assertSame($value, $config->validFileTypes);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['validFileTypes']);
     }
 
-    public function testNotCreatable(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testValidFileTypesMethod(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('notCreatable', $config);
-        $this->assertObjectPropertyHookAcceptBool('notCreatable', $config);
+        $returned = $config->validFileTypes($value);
 
-        $this->assertObjectMethodAcceptBool('notCreatable', $config);
-        $this->assertObjectMethodDeclineNull('notCreatable', $config);
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->validFileTypes);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['validFileTypes']);
     }
 
-    public function testSwitchToEdit(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testEditableFileTypesProperty(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('switchToEdit', $config);
-        $this->assertObjectPropertyHookAcceptBool('switchToEdit', $config);
+        $config->editableFileTypes = $value;
 
-        $this->assertObjectMethodAcceptBool('switchToEdit', $config);
-        $this->assertObjectMethodDeclineNull('switchToEdit', $config);
+        self::assertSame($value, $config->editableFileTypes);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['editableFileTypes']);
     }
 
-    public function testEnableVersioning(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testEditableFileTypesMethod(?string $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('enableVersioning', $config);
-        $this->assertObjectPropertyHookAcceptBool('enableVersioning', $config);
+        $returned = $config->editableFileTypes($value);
 
-        $this->assertObjectMethodAcceptBool('enableVersioning', $config);
-        $this->assertObjectMethodDeclineNull('enableVersioning', $config);
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->editableFileTypes);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['editableFileTypes']);
     }
 
-    public function testDoNotCopyRecords(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderBool')]
+    public function testDatabaseAssistedProperty(?bool $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('doNotCopyRecords', $config);
-        $this->assertObjectPropertyHookAcceptBool('doNotCopyRecords', $config);
+        $config->databaseAssisted = $value;
 
-        $this->assertObjectMethodAcceptBool('doNotCopyRecords', $config);
-        $this->assertObjectMethodDeclineNull('doNotCopyRecords', $config);
+        self::assertSame($value, $config->databaseAssisted);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['databaseAssisted']);
     }
 
-    public function testDoNotDeleteRecords(): void
+    #[DataProvider('dataProviderBool')]
+    public function testDatabaseAssistedMethod(bool $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('doNotDeleteRecords', $config);
-        $this->assertObjectPropertyHookAcceptBool('doNotDeleteRecords', $config);
+        $returned = $config->databaseAssisted($value);
 
-        $this->assertObjectMethodAcceptBool('doNotDeleteRecords', $config);
-        $this->assertObjectMethodDeclineNull('doNotDeleteRecords', $config);
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->databaseAssisted);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['databaseAssisted']);
     }
 
-    public function testBacklink(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderBool')]
+    public function testClosedProperty(?bool $value): void
     {
         $config = new Config('tl_test');
 
-        $this->assertObjectPropertyHookAcceptNull('backlink', $config);
-        $this->assertObjectPropertyHookAcceptString('backlink', $config);
+        $config->closed = $value;
 
-        $this->assertObjectMethodAcceptNull('backlink', $config);
-        $this->assertObjectMethodAcceptString('backlink', $config);
+        self::assertSame($value, $config->closed);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['closed']);
     }
 
-    public function testUnset(): void
-    {
-        $config = new Config('tl_test');
-        $config->ptable = 'tl_parent';
-
-        static::assertSame('tl_parent', $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
-
-        $config->__unset('ptable');
-
-        static::assertArrayNotHasKey('ptable', $GLOBALS['TL_DCA']['tl_test']['config']);
-    }
-
-    public function testDynamicProperties(): void
+    #[DataProvider('dataProviderBool')]
+    public function testClosedMethod(bool $value): void
     {
         $config = new Config('tl_test');
 
-        $config->dynamicProperty = 'value';
+        $returned = $config->closed($value);
 
-        static::assertSame('value', $config->dynamicProperty);
-        static::assertSame('value', $GLOBALS['TL_DCA']['tl_test']['config']['dynamicProperty']);
-
-        // make sure this is only a "virtual" property and not set on the object directly
-        static::assertObjectNotHasProperty('dynamicProperty', $config);
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->closed);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['closed']);
     }
 
-    public function testUnsetDynamicProperty(): void
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderBool')]
+    public function testNotEditableProperty(?bool $value): void
     {
         $config = new Config('tl_test');
 
-        $config->dynamicProperty = 'value';
+        $config->notEditable = $value;
 
-        static::assertSame('value', $config->dynamicProperty);
+        self::assertSame($value, $config->notEditable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notEditable']);
+    }
 
-        unset($config->dynamicProperty);
+    #[DataProvider('dataProviderBool')]
+    public function testNotEditableMethod(bool $value): void
+    {
+        $config = new Config('tl_test');
 
-        static::assertNull($config->dynamicProperty);
-        static::assertNull($GLOBALS['TL_DCA']['tl_test']['config']['dynamicProperty']);
-        static::assertArrayNotHasKey('dynamicProperty', $GLOBALS['TL_DCA']['tl_test']['config']);
+        $returned = $config->notEditable($value);
 
-        static::assertObjectNotHasProperty('dynamicProperty', $config);
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->notEditable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notEditable']);
+    }
+
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderBool')]
+    public function testNotDeletableProperty(?bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->notDeletable = $value;
+
+        self::assertSame($value, $config->notDeletable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notDeletable']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testNotDeletableMethod(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $returned = $config->notDeletable($value);
+
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->notDeletable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notDeletable']);
+    }
+
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderBool')]
+    public function testNotSortableProperty(?bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->notSortable = $value;
+
+        self::assertSame($value, $config->notSortable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notSortable']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testNotSortableMethod(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $returned = $config->notSortable($value);
+
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->notSortable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notSortable']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testNotCopyableProperty(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->notCopyable = $value;
+
+        self::assertSame($value, $config->notCopyable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCopyable']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testNotCopyableMethod(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $returned = $config->notCopyable($value);
+
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->notCopyable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCopyable']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testNotCreatableProperty(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->notCreatable = $value;
+
+        self::assertSame($value, $config->notCreatable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCreatable']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testNotCreatableMethod(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $returned = $config->notCreatable($value);
+
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->notCreatable);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCreatable']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testSwitchToEditProperty(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->switchToEdit = $value;
+
+        self::assertSame($value, $config->switchToEdit);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['switchToEdit']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testSwitchToEditMethod(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $returned = $config->switchToEdit($value);
+
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->switchToEdit);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['switchToEdit']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testEnableVersioningProperty(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->enableVersioning = $value;
+
+        self::assertSame($value, $config->enableVersioning);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['enableVersioning']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testEnableVersioningMethod(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $returned = $config->enableVersioning($value);
+
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->enableVersioning);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['enableVersioning']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testDoNotCopyRecordsProperty(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->doNotCopyRecords = $value;
+
+        self::assertSame($value, $config->doNotCopyRecords);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotCopyRecords']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testDoNotCopyRecordsMethod(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $returned = $config->doNotCopyRecords($value);
+
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->doNotCopyRecords);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotCopyRecords']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testDoNotDeleteRecordsProperty(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->doNotDeleteRecords = $value;
+
+        self::assertSame($value, $config->doNotDeleteRecords);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotDeleteRecords']);
+    }
+
+    #[DataProvider('dataProviderBool')]
+    public function testDoNotDeleteRecordsMethod(bool $value): void
+    {
+        $config = new Config('tl_test');
+
+        $returned = $config->doNotDeleteRecords($value);
+
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->doNotDeleteRecords);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotDeleteRecords']);
+    }
+
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testBacklinkProperty(?string $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->backlink = $value;
+
+        self::assertSame($value, $config->backlink);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['backlink']);
+    }
+
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testBacklinkMethod(?string $value): void
+    {
+        $config = new Config('tl_test');
+
+        $returned = $config->backlink($value);
+
+        self::assertSame($config, $returned);
+        self::assertSame($value, $config->backlink);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['backlink']);
+    }
+
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderBool')]
+    #[DataProvider('dataProviderInt')]
+    #[DataProvider('dataProviderString')]
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderCallable')]
+    #[DataProvider('dataProviderResource')]
+    #[DataProvider('dataProviderObject')]
+    public function testDynamicProperties(mixed $value): void
+    {
+        $config = new Config('tl_test');
+
+        // make sure this is only a virtual property
+        self::assertObjectNotHasProperty('dynamicProperty', $config);
+
+        $config->dynamicProperty = $value;
+
+        self::assertSame($value, $config->dynamicProperty);
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicProperty']);
+
+        if (is_null($value)) {
+            self::assertFalse($config->isset('dynamicProperty'));
+        } else {
+            self::assertTrue($config->isset('dynamicProperty'));
+        }
+
+        $config->unset('dynamicProperty');
+
+        self::assertFalse($config->isset('dynamicProperty'));
+        self::assertNull($config->dynamicProperty);
+
+        self::assertArrayNotHasKey('dynamicProperty', $GLOBALS['TL_DCA']['tl_test']['config']);
     }
 
     public function testUnsetVirtualPropertyHooks(): void
@@ -299,13 +647,39 @@ class ConfigTest extends TestCase
         $config = new Config('tl_test');
         $config->ptable = 'tl_parent';
 
-        static::assertSame('tl_parent', $config->ptable);
-        static::assertSame('tl_parent', $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
+        self::assertSame('tl_parent', $config->ptable);
+        self::assertSame('tl_parent', $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
 
         $config->unset('ptable');
 
-        static::assertNull($config->ptable);
-        static::assertNull($GLOBALS['TL_DCA']['tl_test']['config']['ptable'] ?? null);
+        self::assertNull($config->ptable);
+        self::assertNull($GLOBALS['TL_DCA']['tl_test']['config']['ptable'] ?? null);
+    }
+
+    public function testCallbacks(): void
+    {
+        $config = new Config('tl_test');
+
+        self::assertInstanceOf(ConfigCallbacks::class, $config->callbacks);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->create);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->beforeSubmit);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->copy);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->cut);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->delete);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->load);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->palette);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->restore);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->restoreVersion);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->submit);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->undo);
+        self::assertInstanceOf(CallbackBag::class, $config->callbacks->version);
+    }
+
+    public function testSql(): void
+    {
+        $config = new Config('tl_test');
+
+        self::assertInstanceOf(ConfigSql::class, $config->sql);;
     }
 
 }

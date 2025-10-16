@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor;
 
-use AllowDynamicProperties;
-use Tastaturberuf\ContaoDataContainerAccessor\Callback\ConfigCallback;
-
 /**
  * @see https://docs.contao.org/dev/reference/dca/config/
  */
-#[AllowDynamicProperties]
 final class Config extends DynamicPropertiesInterface
 {
     private readonly string $_table;
@@ -25,7 +21,7 @@ final class Config extends DynamicPropertiesInterface
         }
     }
 
-    public function label(string $label): self
+    public function label(?string $label): self
     {
         $this->label = $label;
 
@@ -42,7 +38,7 @@ final class Config extends DynamicPropertiesInterface
         }
     }
 
-    public function ptable(string $ptable): self
+    public function ptable(?string $ptable): self
     {
         $this->ptable = $ptable;
 
@@ -70,7 +66,7 @@ final class Config extends DynamicPropertiesInterface
         }
     }
 
-    public function ctable(array $ctable): self
+    public function ctable(?array $ctable): self
     {
         $this->ctable = $ctable;
 
@@ -84,7 +80,7 @@ final class Config extends DynamicPropertiesInterface
         }
     }
 
-    public function dataContainer(string $dataContainer = 'Contao\DC_Table'): self
+    public function dataContainer(?string $dataContainer = 'Contao\DC_Table'): self
     {
         $this->dataContainer = $dataContainer;
 
@@ -98,7 +94,7 @@ final class Config extends DynamicPropertiesInterface
         }
     }
 
-    public function markAsCopy(string $markAsCopy): self
+    public function markAsCopy(?string $markAsCopy): self
     {
         $this->markAsCopy = $markAsCopy;
 
@@ -112,7 +108,7 @@ final class Config extends DynamicPropertiesInterface
         }
     }
 
-    public function uploadPath(string $uploadPath): self
+    public function uploadPath(?string $uploadPath): self
     {
         $this->uploadPath = $uploadPath;
 
@@ -126,7 +122,7 @@ final class Config extends DynamicPropertiesInterface
         }
     }
 
-    public function validFileTypes(string $validFileTypes): self
+    public function validFileTypes(?string $validFileTypes): self
     {
         $this->validFileTypes = $validFileTypes;
 
@@ -140,7 +136,7 @@ final class Config extends DynamicPropertiesInterface
         }
     }
 
-    public function editableFileTypes(string $editableFileTypes): self
+    public function editableFileTypes(?string $editableFileTypes): self
     {
         $this->editableFileTypes = $editableFileTypes;
 
@@ -308,23 +304,24 @@ final class Config extends DynamicPropertiesInterface
         }
     }
 
-    public function backlink(string $backlink): self
+    public function backlink(?string $backlink): self
     {
         $this->backlink = $backlink;
 
         return $this;
     }
 
-    public readonly ConfigCallbacks $callbacks;
+    public ConfigCallbacks $callbacks {
+        get => $this->callbacks ?? new ConfigCallbacks($this->_table);
+    }
 
-    public readonly ConfigSql $sql;
+    public ConfigSql $sql {
+        get => $this->sql ?? new ConfigSql($this->_table);
+    }
 
     public function __construct(string $table)
     {
         $this->_table = $table;
-
-        $this->sql = new ConfigSql($table);
-        $this->callbacks = new ConfigCallbacks($table);
     }
 
     public function __get(string $name): mixed
@@ -345,22 +342,6 @@ final class Config extends DynamicPropertiesInterface
     public function __unset(string $name): void
     {
         unset($GLOBALS['TL_DCA'][$this->_table]['config'][$name]);
-    }
-
-    /**
-     * A static factory method to make oneliner possible.
-     * This prevents `Fatal error: Cannot use temporary expression in write context ...`
-     *
-     *     Config::for('tl_test')->ptable = 'tl_parent'
-     */
-    public static function for(string $table): self
-    {
-        return new self($table);
-    }
-
-    public function addCallback(ConfigCallback $name, callable $callback): void
-    {
-        $GLOBALS['TL_DCA'][$this->_table]['config'][$name->value][] = $callback;
     }
 
 }
