@@ -4,39 +4,40 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor;
 
-final class CallbackBag implements \ArrayAccess
+use function array_splice;
+use function count;
+
+final class CallbackBag
 {
 
     public function __construct(private array &$path)
     {
     }
 
-    public function offsetExists(mixed $offset): bool
+    public function all(): array
     {
-        return isset($this->path[$offset]);
+        return $this->path;
     }
 
-    public function offsetGet(mixed $offset): mixed
+    public function add(callable $callback, ?int $position = null): self
     {
-        return $this->path[$offset] ?? null;
+        $position ??= count($this->path);
+
+        array_splice($this->path, $position, 0, $callback);
+
+        return $this;
     }
 
-    public function offsetSet(mixed $offset, mixed $value): void
+    public function get(int $position): ?callable
     {
-        if(!\is_callable($value)) {
-            throw new \InvalidArgumentException('The callback must be a callable.');
-        }
-
-        if (null === $offset) {
-            $this->path[] = $value;
-        } else {
-            $this->path[$offset] = $value;
-        }
+        return $this->path[$position] ?? null;
     }
 
-    public function offsetUnset(mixed $offset): void
+    public function remove(int $position): self
     {
-        unset($this->path[$offset]);
+        array_splice($this->path, $position, 1);
+
+        return $this;
     }
 
 }
