@@ -78,6 +78,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
         return [
             'closure' => [fn() => true],
             'static closure' => [static fn() => true],
+            'first class callable' => [strlen(...)],
             'instance callable' => [new class {
                 public function __invoke(): bool
                 {
