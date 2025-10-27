@@ -8,57 +8,101 @@ use Tastaturberuf\ContaoDataContainerAccessor\Callback\ConfigCallback;
 use Tastaturberuf\ContaoDataContainerAccessor\Callback\LabelCallback;
 use Tastaturberuf\ContaoDataContainerAccessor\Callback\ListCallback;
 
-final class DataContainerAccessor
+final class DataContainerAccessor extends DynamicPropertiesInterface
 {
 
-    public readonly Config $config;
-    public readonly Listing $list;
+    private string $_table;
 
-    public readonly FieldBag $fields;
+    public Config $config {
+        get => $this->config ??= new Config($this->_table);
+        set(array|Config $value) {
+            $this->__set('config', $value);
+        }
+    }
 
-
-    public function __construct(private readonly string $table)
+    public function config(callable $callback): self
     {
-        $this->config = new Config($table);
-        $this->list = new Listing($table);
-        $this->fields = new FieldBag($table);
+        $callback($this->config, $this->_table);
+
+        return $this;
+    }
+
+    public Listing $list {
+        get => $this->list ??= new Listing($this->_table);
+        set(array|Listing $value) {
+            $this->__set('list', $value);
+        }
+    }
+
+    public function listing(callable $callback): self
+    {
+        $callback($this->list, $this->_table);
+
+        return $this;
+    }
+
+    public FieldBag $fields {
+        get => $this->fields ??= new FieldBag($this->_table);
+        set(array|FieldBag $value) {
+            $this->__set('fields', $value);
+        }
+    }
+
+    public function fields(callable $callback): self
+    {
+        $callback($this->fields, $this->_table);
+
+        return $this;
+    }
+
+    public function __construct(string $table)
+    {
+        $this->_table = $table;
     }
 
     public function __get(string $name): mixed
     {
-        return $GLOBALS['TL_DCA'][$this->table][$name] ?? null;
+        return $GLOBALS['TL_DCA'][$this->_table][$name] ?? null;
     }
 
     public function __set(string $name, mixed $value): void
     {
-        $GLOBALS['TL_DCA'][$this->table][$name] = $value;
+        $GLOBALS['TL_DCA'][$this->_table][$name] = $value;
     }
 
     public function __isset(string $name): bool
     {
-        return isset($GLOBALS['TL_DCA'][$this->table][$name]);
+        return isset($GLOBALS['TL_DCA'][$this->_table][$name]);
     }
 
-    public function config(callable $callback): Config
+    public function __unset(string $name): void
     {
-        $callback($this->config);
-
-        return $this->config;
+        unset($GLOBALS['TL_DCA'][$this->_table][$name]);
     }
 
-    public function addCallback(ConfigCallback|ListCallback|LabelCallback $name, callable $callback): void
+    public function addCallback(string|ConfigCallback|ListCallback|LabelCallback $name, callable $callback): self
     {
+        match ($name) {
+            'config.oncreate', ConfigCallback::Create => $GLOBALS['TL_DCA'][$this->_table]['config']['oncreate_callback'][] = $callback,
+            'config.onload', ConfigCallback::Load => $GLOBALS['TL_DCA'][$this->_table]['config']['onload_callback'][] = $callback,
+            'config.onsubmit', ConfigCallback::Submit => $GLOBALS['TL_DCA'][$this->_table]['config']['onsubmit_callback'][] = $callback,
+
+            default => $GLOBALS['TL_DCA'][$this->_table]['config'][$name->value ?? $name][] = $callback
+        };
+
         if ($name instanceof ConfigCallback) {
-            $GLOBALS['TL_DCA'][$this->table]['config'][$name->value][] = $callback;
+            $GLOBALS['TL_DCA'][$this->_table]['config'][$name->value][] = $callback;
         }
 
         if ($name instanceof ListCallback) {
-            $GLOBALS['TL_DCA'][$this->table]['list']['sorting'][$name->value] = $name;
+            $GLOBALS['TL_DCA'][$this->_table]['list']['sorting'][$name->value] = $name;
         }
 
         if ($name instanceof LabelCallback) {
-            $GLOBALS['TL_DCA'][$this->table]['list']['label'][$name->value] = $name;
+            $GLOBALS['TL_DCA'][$this->_table]['list']['label'][$name->value] = $name;
         }
+
+        return $this;
     }
 
 }
