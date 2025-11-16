@@ -319,6 +319,17 @@ final class Config extends DynamicPropertiesInterface
         get => $this->sql ?? new ConfigSql($this->_table);
     }
 
+    public function sql(null|array|callable $callback): self
+    {
+        if (is_callable($callback)) {
+            $callback($this->sql, $this->_table);
+        } else {
+            $this->__set('sql', $callback);
+        }
+
+        return $this;
+    }
+
     public function __construct(string $table)
     {
         $this->_table = $table;
