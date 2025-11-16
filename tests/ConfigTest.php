@@ -594,11 +594,22 @@ class ConfigTest extends TestCase
         self::assertInstanceOf(CallbackBag::class, $config->callbacks->version);
     }
 
-    public function testSqlProperty(): void
+    public function testGetSqlProperty(): void
     {
         $config = new Config('tl_test');
 
         self::assertInstanceOf(ConfigSql::class, $config->sql);
+    }
+
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderArray')]
+    public function testSetSqlProperty(mixed $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->sql = $value;
+
+        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['sql']);
     }
 
     #[DataProvider('dataProviderNull')]
