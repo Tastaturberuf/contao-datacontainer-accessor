@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tastaturberuf\ContaoDataContainerAccessor\Tests;
 
 use Tastaturberuf\ContaoDataContainerAccessor\Config;
@@ -7,7 +9,7 @@ use Tastaturberuf\ContaoDataContainerAccessor\DataContainerAccessor;
 use Tastaturberuf\ContaoDataContainerAccessor\FieldBag;
 use Tastaturberuf\ContaoDataContainerAccessor\Listing;
 
-class DataContainerAccessorTest extends TestCase
+final class DataContainerAccessorTest extends TestCase
 {
 
     public function testCanInstantiate(): void
@@ -24,11 +26,11 @@ class DataContainerAccessorTest extends TestCase
         $dca = new DataContainerAccessor('tl_test');
 
         $returned = $dca->config(static function ($config, $table): void {
-            self::assertInstanceOf(Config::class, $config);
-            self::assertSame('tl_test', $table);
+            static::assertInstanceOf(Config::class, $config);
+            static::assertSame('tl_test', $table);
         });
 
-        self::assertSame($dca, $returned);
+        static::assertSame($dca, $returned);
     }
 
     public function testListMethod(): void
@@ -36,11 +38,11 @@ class DataContainerAccessorTest extends TestCase
         $dca = new DataContainerAccessor('tl_test');
 
         $returned = $dca->listing(static function ($listing, $table): void {
-            self::assertInstanceOf(Listing::class, $listing);
-            self::assertSame('tl_test', $table);
+            static::assertInstanceOf(Listing::class, $listing);
+            static::assertSame('tl_test', $table);
         });
 
-        self::assertSame($dca, $returned);
+        static::assertSame($dca, $returned);
     }
 
     public function testFieldsMethod(): void
@@ -48,11 +50,11 @@ class DataContainerAccessorTest extends TestCase
         $dca = new DataContainerAccessor('tl_test');
 
         $returned = $dca->fields(static function ($fields, $table): void {
-            self::assertInstanceOf(FieldBag::class, $fields);
-            self::assertSame('tl_test', $table);
+            static::assertInstanceOf(FieldBag::class, $fields);
+            static::assertSame('tl_test', $table);
         });
 
-        self::assertSame($dca, $returned);
+        static::assertSame($dca, $returned);
     }
 
     public function testDynamicProperties(): void
