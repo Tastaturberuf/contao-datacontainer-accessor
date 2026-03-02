@@ -10,14 +10,24 @@ use Tastaturberuf\ContaoDataContainerAccessor\Config;
 use Tastaturberuf\ContaoDataContainerAccessor\ConfigCallbacks;
 use Tastaturberuf\ContaoDataContainerAccessor\ConfigSql;
 
-class ConfigTest extends TestCase
+final class ConfigTest extends TestCase
 {
+    private array $global {
+        get {
+            $dca = $GLOBALS['TL_DCA']['tl_test']['config'] ?? null;
+
+            static::assertNotNull($dca);
+            static::assertIsArray($dca);
+
+            return $dca;
+        }
+    }
 
     public function testCanInstantiate(): void
     {
         $class = new Config('tl_test');
 
-        self::assertInstanceOf(Config::class, $class);
+        static::assertInstanceOf(Config::class, $class);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -28,8 +38,9 @@ class ConfigTest extends TestCase
 
         $config->label = $value;
 
-        self::assertSame($value, $config->label);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['label']);
+        static::assertSame($value, $config->label);
+        static::assertArrayHasKey('label', $this->global);
+        static::assertSame($value, $this->global['label']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -40,9 +51,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->label($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->label);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['label']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->label);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['label']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -53,8 +64,8 @@ class ConfigTest extends TestCase
 
         $config->ptable = $value;
 
-        self::assertSame($value, $config->ptable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
+        static::assertSame($value, $config->ptable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -65,9 +76,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->ptable($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->ptable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->ptable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -78,8 +89,8 @@ class ConfigTest extends TestCase
 
         $config->dynamicPtable = $value;
 
-        self::assertSame($value, $config->dynamicPtable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicPtable']);
+        static::assertSame($value, $config->dynamicPtable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicPtable']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -89,9 +100,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->dynamicPtable($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->dynamicPtable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicPtable']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->dynamicPtable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicPtable']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -102,8 +113,8 @@ class ConfigTest extends TestCase
 
         $config->ctable = $value;
 
-        self::assertSame($value, $config->ctable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ctable']);
+        static::assertSame($value, $config->ctable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ctable']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -114,9 +125,9 @@ class ConfigTest extends TestCase
 
         $retuned = $config->ctable($value);
 
-        self::assertSame($config, $retuned);
-        self::assertSame($value, $config->ctable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ctable']);
+        static::assertSame($config, $retuned);
+        static::assertSame($value, $config->ctable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ctable']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -127,8 +138,8 @@ class ConfigTest extends TestCase
 
         $config->dataContainer = $value;
 
-        self::assertSame($value, $config->dataContainer);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dataContainer']);
+        static::assertSame($value, $config->dataContainer);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dataContainer']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -139,9 +150,9 @@ class ConfigTest extends TestCase
 
         $retuned = $config->dataContainer($value);
 
-        self::assertSame($config, $retuned);
-        self::assertSame($value, $config->dataContainer);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dataContainer']);
+        static::assertSame($config, $retuned);
+        static::assertSame($value, $config->dataContainer);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dataContainer']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -152,8 +163,8 @@ class ConfigTest extends TestCase
 
         $config->markAsCopy = $value;
 
-        self::assertSame($value, $config->markAsCopy);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['markAsCopy']);
+        static::assertSame($value, $config->markAsCopy);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['markAsCopy']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -164,9 +175,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->markAsCopy($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->markAsCopy);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['markAsCopy']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->markAsCopy);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['markAsCopy']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -177,8 +188,8 @@ class ConfigTest extends TestCase
 
         $config->uploadPath = $value;
 
-        self::assertSame($value, $config->uploadPath);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['uploadPath']);
+        static::assertSame($value, $config->uploadPath);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['uploadPath']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -189,9 +200,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->uploadPath($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->uploadPath);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['uploadPath']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->uploadPath);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['uploadPath']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -202,8 +213,8 @@ class ConfigTest extends TestCase
 
         $config->validFileTypes = $value;
 
-        self::assertSame($value, $config->validFileTypes);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['validFileTypes']);
+        static::assertSame($value, $config->validFileTypes);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['validFileTypes']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -214,9 +225,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->validFileTypes($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->validFileTypes);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['validFileTypes']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->validFileTypes);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['validFileTypes']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -227,8 +238,8 @@ class ConfigTest extends TestCase
 
         $config->editableFileTypes = $value;
 
-        self::assertSame($value, $config->editableFileTypes);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['editableFileTypes']);
+        static::assertSame($value, $config->editableFileTypes);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['editableFileTypes']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -239,9 +250,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->editableFileTypes($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->editableFileTypes);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['editableFileTypes']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->editableFileTypes);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['editableFileTypes']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -252,8 +263,8 @@ class ConfigTest extends TestCase
 
         $config->databaseAssisted = $value;
 
-        self::assertSame($value, $config->databaseAssisted);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['databaseAssisted']);
+        static::assertSame($value, $config->databaseAssisted);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['databaseAssisted']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -263,9 +274,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->databaseAssisted($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->databaseAssisted);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['databaseAssisted']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->databaseAssisted);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['databaseAssisted']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -276,8 +287,8 @@ class ConfigTest extends TestCase
 
         $config->closed = $value;
 
-        self::assertSame($value, $config->closed);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['closed']);
+        static::assertSame($value, $config->closed);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['closed']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -287,9 +298,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->closed($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->closed);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['closed']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->closed);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['closed']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -300,8 +311,8 @@ class ConfigTest extends TestCase
 
         $config->notEditable = $value;
 
-        self::assertSame($value, $config->notEditable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notEditable']);
+        static::assertSame($value, $config->notEditable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notEditable']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -311,9 +322,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->notEditable($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->notEditable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notEditable']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->notEditable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notEditable']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -324,8 +335,8 @@ class ConfigTest extends TestCase
 
         $config->notDeletable = $value;
 
-        self::assertSame($value, $config->notDeletable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notDeletable']);
+        static::assertSame($value, $config->notDeletable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notDeletable']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -335,9 +346,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->notDeletable($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->notDeletable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notDeletable']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->notDeletable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notDeletable']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -348,8 +359,8 @@ class ConfigTest extends TestCase
 
         $config->notSortable = $value;
 
-        self::assertSame($value, $config->notSortable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notSortable']);
+        static::assertSame($value, $config->notSortable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notSortable']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -359,9 +370,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->notSortable($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->notSortable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notSortable']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->notSortable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notSortable']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -371,8 +382,8 @@ class ConfigTest extends TestCase
 
         $config->notCopyable = $value;
 
-        self::assertSame($value, $config->notCopyable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCopyable']);
+        static::assertSame($value, $config->notCopyable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCopyable']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -382,9 +393,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->notCopyable($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->notCopyable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCopyable']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->notCopyable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCopyable']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -394,8 +405,8 @@ class ConfigTest extends TestCase
 
         $config->notCreatable = $value;
 
-        self::assertSame($value, $config->notCreatable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCreatable']);
+        static::assertSame($value, $config->notCreatable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCreatable']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -405,9 +416,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->notCreatable($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->notCreatable);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCreatable']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->notCreatable);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCreatable']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -417,8 +428,8 @@ class ConfigTest extends TestCase
 
         $config->switchToEdit = $value;
 
-        self::assertSame($value, $config->switchToEdit);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['switchToEdit']);
+        static::assertSame($value, $config->switchToEdit);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['switchToEdit']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -428,9 +439,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->switchToEdit($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->switchToEdit);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['switchToEdit']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->switchToEdit);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['switchToEdit']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -440,8 +451,8 @@ class ConfigTest extends TestCase
 
         $config->enableVersioning = $value;
 
-        self::assertSame($value, $config->enableVersioning);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['enableVersioning']);
+        static::assertSame($value, $config->enableVersioning);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['enableVersioning']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -451,9 +462,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->enableVersioning($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->enableVersioning);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['enableVersioning']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->enableVersioning);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['enableVersioning']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -463,8 +474,8 @@ class ConfigTest extends TestCase
 
         $config->doNotCopyRecords = $value;
 
-        self::assertSame($value, $config->doNotCopyRecords);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotCopyRecords']);
+        static::assertSame($value, $config->doNotCopyRecords);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotCopyRecords']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -474,9 +485,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->doNotCopyRecords($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->doNotCopyRecords);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotCopyRecords']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->doNotCopyRecords);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotCopyRecords']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -486,8 +497,8 @@ class ConfigTest extends TestCase
 
         $config->doNotDeleteRecords = $value;
 
-        self::assertSame($value, $config->doNotDeleteRecords);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotDeleteRecords']);
+        static::assertSame($value, $config->doNotDeleteRecords);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotDeleteRecords']);
     }
 
     #[DataProvider('dataProviderBool')]
@@ -497,9 +508,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->doNotDeleteRecords($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->doNotDeleteRecords);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotDeleteRecords']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->doNotDeleteRecords);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotDeleteRecords']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -510,8 +521,8 @@ class ConfigTest extends TestCase
 
         $config->backlink = $value;
 
-        self::assertSame($value, $config->backlink);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['backlink']);
+        static::assertSame($value, $config->backlink);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['backlink']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -522,9 +533,9 @@ class ConfigTest extends TestCase
 
         $returned = $config->backlink($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $config->backlink);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['backlink']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $config->backlink);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['backlink']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -540,25 +551,25 @@ class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         // make sure this is only a virtual property
-        self::assertObjectNotHasProperty('dynamicProperty', $config);
+        static::assertObjectNotHasProperty('dynamicProperty', $config);
 
         $config->dynamicProperty = $value;
 
-        self::assertSame($value, $config->dynamicProperty);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicProperty']);
+        static::assertSame($value, $config->dynamicProperty);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicProperty']);
 
         if (is_null($value)) {
-            self::assertFalse($config->isset('dynamicProperty'));
+            static::assertFalse($config->isset('dynamicProperty'));
         } else {
-            self::assertTrue($config->isset('dynamicProperty'));
+            static::assertTrue($config->isset('dynamicProperty'));
         }
 
         $config->unset('dynamicProperty');
 
-        self::assertFalse($config->isset('dynamicProperty'));
-        self::assertNull($config->dynamicProperty);
+        static::assertFalse($config->isset('dynamicProperty'));
+        static::assertNull($config->dynamicProperty);
 
-        self::assertArrayNotHasKey('dynamicProperty', $GLOBALS['TL_DCA']['tl_test']['config']);
+        static::assertArrayNotHasKey('dynamicProperty', $GLOBALS['TL_DCA']['tl_test']['config']);
     }
 
     public function testUnsetVirtualPropertyHooks(): void
@@ -566,39 +577,39 @@ class ConfigTest extends TestCase
         $config = new Config('tl_test');
         $config->ptable = 'tl_parent';
 
-        self::assertSame('tl_parent', $config->ptable);
-        self::assertSame('tl_parent', $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
+        static::assertSame('tl_parent', $config->ptable);
+        static::assertSame('tl_parent', $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
 
         $config->unset('ptable');
 
-        self::assertNull($config->ptable);
-        self::assertNull($GLOBALS['TL_DCA']['tl_test']['config']['ptable'] ?? null);
+        static::assertNull($config->ptable);
+        static::assertNull($GLOBALS['TL_DCA']['tl_test']['config']['ptable'] ?? null);
     }
 
     public function testCallbacks(): void
     {
         $config = new Config('tl_test');
 
-        self::assertInstanceOf(ConfigCallbacks::class, $config->callbacks);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->create);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->beforeSubmit);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->copy);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->cut);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->delete);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->load);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->palette);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->restore);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->restoreVersion);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->submit);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->undo);
-        self::assertInstanceOf(CallbackBag::class, $config->callbacks->version);
+        static::assertInstanceOf(ConfigCallbacks::class, $config->callbacks);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->create);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->beforeSubmit);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->copy);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->cut);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->delete);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->load);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->palette);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->restore);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->restoreVersion);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->submit);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->undo);
+        static::assertInstanceOf(CallbackBag::class, $config->callbacks->version);
     }
 
     public function testGetSqlProperty(): void
     {
         $config = new Config('tl_test');
 
-        self::assertInstanceOf(ConfigSql::class, $config->sql);
+        static::assertInstanceOf(ConfigSql::class, $config->sql);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -609,7 +620,7 @@ class ConfigTest extends TestCase
 
         $config->sql = $value;
 
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['sql']);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['sql']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -620,17 +631,17 @@ class ConfigTest extends TestCase
 
         $returned = $config->sql($value);
 
-        self::assertSame($config, $returned);
-        self::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['sql']);
+        static::assertSame($config, $returned);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['sql']);
     }
 
     public function testSqlMethodWithCallable(): void
     {
         $config = new Config('tl_test');
 
-        $config->sql(fn(ConfigSql $sql) => $sql->charset = 'utf8mb4');
+        $config->sql(fn(ConfigSql $sql, string $table) => $sql->charset = 'utf8mb4');
 
-        self::assertSame('utf8mb4', $GLOBALS['TL_DCA']['tl_test']['config']['sql']['charset']);
+        static::assertSame('utf8mb4', $GLOBALS['TL_DCA']['tl_test']['config']['sql']['charset']);
     }
 
 }
