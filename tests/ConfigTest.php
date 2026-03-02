@@ -652,24 +652,26 @@ final class ConfigTest extends TestCase
 
     #[DataProvider('dataProviderNull')]
     #[DataProvider('dataProviderArray')]
-    public function testSetSqlProperty(mixed $value): void
+    public function testSetSqlProperty(?array $value): void
     {
         $config = new Config('tl_test');
 
         $config->sql = $value;
 
+        /** @mago-ignore analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['sql']);
     }
 
     #[DataProvider('dataProviderNull')]
     #[DataProvider('dataProviderArray')]
-    public function testSqlMethod(mixed $value): void
+    public function testSqlMethod(?array $value): void
     {
         $config = new Config('tl_test');
 
         $returned = $config->sql($value);
 
         static::assertSame($config, $returned);
+        /** @mago-ignore analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['sql']);
     }
 
@@ -679,6 +681,7 @@ final class ConfigTest extends TestCase
 
         $config->sql(fn(ConfigSql $sql, string $table) => $sql->charset = 'utf8mb4');
 
+        /** @mago-ignore analysis:mixed-array-access,mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame('utf8mb4', $GLOBALS['TL_DCA']['tl_test']['config']['sql']['charset']);
     }
 }
