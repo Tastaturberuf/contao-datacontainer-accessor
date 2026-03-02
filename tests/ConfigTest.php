@@ -12,17 +12,6 @@ use Tastaturberuf\ContaoDataContainerAccessor\ConfigSql;
 
 final class ConfigTest extends TestCase
 {
-    private array $global {
-        get {
-            $dca = $GLOBALS['TL_DCA']['tl_test']['config'] ?? null;
-
-            static::assertNotNull($dca);
-            static::assertIsArray($dca);
-
-            return $dca;
-        }
-    }
-
     public function testCanInstantiate(): void
     {
         $class = new Config('tl_test');
@@ -39,8 +28,8 @@ final class ConfigTest extends TestCase
         $config->label = $value;
 
         static::assertSame($value, $config->label);
-        static::assertArrayHasKey('label', $this->global);
-        static::assertSame($value, $this->global['label']);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['label']);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -53,6 +42,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->label);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['label']);
     }
 
@@ -65,6 +55,7 @@ final class ConfigTest extends TestCase
         $config->ptable = $value;
 
         static::assertSame($value, $config->ptable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
     }
 
@@ -78,6 +69,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->ptable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
     }
 
@@ -90,6 +82,7 @@ final class ConfigTest extends TestCase
         $config->dynamicPtable = $value;
 
         static::assertSame($value, $config->dynamicPtable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicPtable']);
     }
 
@@ -102,6 +95,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->dynamicPtable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicPtable']);
     }
 
@@ -114,6 +108,7 @@ final class ConfigTest extends TestCase
         $config->ctable = $value;
 
         static::assertSame($value, $config->ctable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ctable']);
     }
 
@@ -127,6 +122,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $retuned);
         static::assertSame($value, $config->ctable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['ctable']);
     }
 
@@ -139,6 +135,7 @@ final class ConfigTest extends TestCase
         $config->dataContainer = $value;
 
         static::assertSame($value, $config->dataContainer);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dataContainer']);
     }
 
@@ -152,6 +149,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $retuned);
         static::assertSame($value, $config->dataContainer);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dataContainer']);
     }
 
@@ -164,6 +162,7 @@ final class ConfigTest extends TestCase
         $config->markAsCopy = $value;
 
         static::assertSame($value, $config->markAsCopy);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['markAsCopy']);
     }
 
@@ -177,6 +176,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->markAsCopy);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['markAsCopy']);
     }
 
@@ -189,6 +189,7 @@ final class ConfigTest extends TestCase
         $config->uploadPath = $value;
 
         static::assertSame($value, $config->uploadPath);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['uploadPath']);
     }
 
@@ -202,6 +203,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->uploadPath);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['uploadPath']);
     }
 
@@ -214,6 +216,7 @@ final class ConfigTest extends TestCase
         $config->validFileTypes = $value;
 
         static::assertSame($value, $config->validFileTypes);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['validFileTypes']);
     }
 
@@ -227,6 +230,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->validFileTypes);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['validFileTypes']);
     }
 
@@ -239,6 +243,7 @@ final class ConfigTest extends TestCase
         $config->editableFileTypes = $value;
 
         static::assertSame($value, $config->editableFileTypes);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['editableFileTypes']);
     }
 
@@ -252,6 +257,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->editableFileTypes);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['editableFileTypes']);
     }
 
@@ -264,6 +270,7 @@ final class ConfigTest extends TestCase
         $config->databaseAssisted = $value;
 
         static::assertSame($value, $config->databaseAssisted);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['databaseAssisted']);
     }
 
@@ -276,6 +283,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->databaseAssisted);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['databaseAssisted']);
     }
 
@@ -288,6 +296,7 @@ final class ConfigTest extends TestCase
         $config->closed = $value;
 
         static::assertSame($value, $config->closed);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['closed']);
     }
 
@@ -300,6 +309,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->closed);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['closed']);
     }
 
@@ -312,6 +322,7 @@ final class ConfigTest extends TestCase
         $config->notEditable = $value;
 
         static::assertSame($value, $config->notEditable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notEditable']);
     }
 
@@ -324,6 +335,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->notEditable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notEditable']);
     }
 
@@ -336,6 +348,7 @@ final class ConfigTest extends TestCase
         $config->notDeletable = $value;
 
         static::assertSame($value, $config->notDeletable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notDeletable']);
     }
 
@@ -348,6 +361,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->notDeletable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notDeletable']);
     }
 
@@ -360,6 +374,7 @@ final class ConfigTest extends TestCase
         $config->notSortable = $value;
 
         static::assertSame($value, $config->notSortable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notSortable']);
     }
 
@@ -372,6 +387,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->notSortable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notSortable']);
     }
 
@@ -383,6 +399,7 @@ final class ConfigTest extends TestCase
         $config->notCopyable = $value;
 
         static::assertSame($value, $config->notCopyable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCopyable']);
     }
 
@@ -395,6 +412,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->notCopyable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCopyable']);
     }
 
@@ -406,6 +424,7 @@ final class ConfigTest extends TestCase
         $config->notCreatable = $value;
 
         static::assertSame($value, $config->notCreatable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCreatable']);
     }
 
@@ -418,6 +437,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->notCreatable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['notCreatable']);
     }
 
@@ -429,6 +449,7 @@ final class ConfigTest extends TestCase
         $config->switchToEdit = $value;
 
         static::assertSame($value, $config->switchToEdit);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['switchToEdit']);
     }
 
@@ -441,6 +462,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->switchToEdit);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['switchToEdit']);
     }
 
@@ -452,6 +474,7 @@ final class ConfigTest extends TestCase
         $config->enableVersioning = $value;
 
         static::assertSame($value, $config->enableVersioning);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['enableVersioning']);
     }
 
@@ -464,6 +487,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->enableVersioning);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['enableVersioning']);
     }
 
@@ -475,6 +499,7 @@ final class ConfigTest extends TestCase
         $config->doNotCopyRecords = $value;
 
         static::assertSame($value, $config->doNotCopyRecords);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotCopyRecords']);
     }
 
@@ -487,6 +512,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->doNotCopyRecords);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotCopyRecords']);
     }
 
@@ -498,6 +524,7 @@ final class ConfigTest extends TestCase
         $config->doNotDeleteRecords = $value;
 
         static::assertSame($value, $config->doNotDeleteRecords);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotDeleteRecords']);
     }
 
@@ -510,6 +537,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->doNotDeleteRecords);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['doNotDeleteRecords']);
     }
 
@@ -522,6 +550,7 @@ final class ConfigTest extends TestCase
         $config->backlink = $value;
 
         static::assertSame($value, $config->backlink);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['backlink']);
     }
 
@@ -535,6 +564,7 @@ final class ConfigTest extends TestCase
 
         static::assertSame($config, $returned);
         static::assertSame($value, $config->backlink);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['backlink']);
     }
 
@@ -553,9 +583,11 @@ final class ConfigTest extends TestCase
         // make sure this is only a virtual property
         static::assertObjectNotHasProperty('dynamicProperty', $config);
 
+        /** @mago-ignore analysis:non-documented-property */
         $config->dynamicProperty = $value;
 
         static::assertSame($value, $config->dynamicProperty);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicProperty']);
 
         if (is_null($value)) {
@@ -569,6 +601,8 @@ final class ConfigTest extends TestCase
         static::assertFalse($config->isset('dynamicProperty'));
         static::assertNull($config->dynamicProperty);
 
+        /** @mago-ignore analysis:mixed-array-access,mixed-array-access */
+        /** @mago-ignore analysis:mixed-argument */
         static::assertArrayNotHasKey('dynamicProperty', $GLOBALS['TL_DCA']['tl_test']['config']);
     }
 
@@ -578,12 +612,16 @@ final class ConfigTest extends TestCase
         $config->ptable = 'tl_parent';
 
         static::assertSame('tl_parent', $config->ptable);
+        /** @mago-expect analysis:mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame('tl_parent', $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
 
         $config->unset('ptable');
 
+        /** @mago-ignore analysis:impossible-type-comparison */
         static::assertNull($config->ptable);
-        static::assertNull($GLOBALS['TL_DCA']['tl_test']['config']['ptable'] ?? null);
+        /** @mago-ignore analysis:mixed-array-access,mixed-array-access */
+        /** @mago-ignore analysis:mixed-argument */
+        static::assertArrayNotHasKey('ptable', $GLOBALS['TL_DCA']['tl_test']['config']);
     }
 
     public function testCallbacks(): void
@@ -643,5 +681,4 @@ final class ConfigTest extends TestCase
 
         static::assertSame('utf8mb4', $GLOBALS['TL_DCA']['tl_test']['config']['sql']['charset']);
     }
-
 }
