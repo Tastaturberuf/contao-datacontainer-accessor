@@ -13,6 +13,8 @@ final class Config extends DynamicPropertiesInterface
 
     /**
      * The label is used with page or file trees and typically includes reference to the language array.
+     *
+     * @mago-expect analysis:mixed-return-statement
      */
     public ?string $label {
         get => $this->__get('label');
@@ -29,7 +31,9 @@ final class Config extends DynamicPropertiesInterface
     }
 
     /**
-     * Name of the related parent table (table.pid = ptable.id).
+     * Name of the related parent table `table.pid = ptable.id`.
+     *
+     * @mago-expect analysis:mixed-return-statement
      */
     public ?string $ptable {
         get => $this->__get('ptable');
@@ -45,6 +49,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $dynamicPtable {
         get => $this->__get('dynamicPtable');
         set {
@@ -59,6 +66,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?array $ctable {
         get => $this->__get('ctable');
         set {
@@ -73,6 +83,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?string $dataContainer {
         get => $this->__get('dataContainer');
         set {
@@ -87,6 +100,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?string $markAsCopy {
         get => $this->__get('markAsCopy');
         set {
@@ -101,6 +117,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?string $uploadPath {
         get => $this->__get('uploadPath');
         set {
@@ -115,6 +134,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?string $validFileTypes {
         get => $this->__get('validFileTypes');
         set {
@@ -129,6 +151,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?string $editableFileTypes {
         get => $this->__get('editableFileTypes');
         set {
@@ -143,6 +168,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $databaseAssisted {
         get => $this->__get('databaseAssisted');
         set {
@@ -157,6 +185,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $closed {
         get => $this->__get('closed');
         set {
@@ -171,6 +202,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $notEditable {
         get => $this->__get('notEditable');
         set {
@@ -185,6 +219,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $notDeletable {
         get => $this->__get('notDeletable');
         set {
@@ -199,6 +236,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $notSortable {
         get => $this->__get('notSortable');
         set {
@@ -213,6 +253,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $notCopyable {
         get => $this->__get('notCopyable');
         set {
@@ -227,6 +270,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $notCreatable {
         get => $this->__get('notCreatable');
         set {
@@ -241,6 +287,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $switchToEdit {
         get => $this->__get('switchToEdit');
         set {
@@ -255,6 +304,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $enableVersioning {
         get => $this->__get('enableVersioning');
         set {
@@ -269,6 +321,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $doNotCopyRecords {
         get => $this->__get('doNotCopyRecords');
         set {
@@ -283,6 +338,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?bool $doNotDeleteRecords {
         get => $this->__get('doNotDeleteRecords');
         set {
@@ -297,6 +355,9 @@ final class Config extends DynamicPropertiesInterface
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-return-statement
+     */
     public ?string $backlink {
         get => $this->__get('backlink');
         set {
@@ -326,6 +387,9 @@ final class Config extends DynamicPropertiesInterface
         }
     }
 
+    /**
+     * @param null|array|callable(ConfigSql $sql, string $table): void $callback
+     */
     public function sql(null|array|callable $callback): self
     {
         if (is_callable($callback)) {
@@ -347,6 +411,9 @@ final class Config extends DynamicPropertiesInterface
         return $GLOBALS['TL_DCA'][$this->_table]['config'][$name] ?? null;
     }
 
+    /**
+     * @mago-ignore analysis:mixed-array-assignment
+     */
     public function __set(string $name, mixed $value): void
     {
         $GLOBALS['TL_DCA'][$this->_table]['config'][$name] = $value;
@@ -357,9 +424,11 @@ final class Config extends DynamicPropertiesInterface
         return isset($GLOBALS['TL_DCA'][$this->_table]['config'][$name]);
     }
 
+    /**
+     * @mago-ignore analysis:mixed-array-access
+     */
     public function __unset(string $name): void
     {
         unset($GLOBALS['TL_DCA'][$this->_table]['config'][$name]);
     }
-
 }
