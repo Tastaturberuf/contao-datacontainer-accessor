@@ -31,6 +31,7 @@ halstead = { effort-threshold = 7000 }
 #too-many-methods = {enabled = false}
 
 [analyzer]
+unchecked-exceptions = ["PHPUnit\\Framework\\Exception"]
 # Enable all checks
 find-unused-expressions = true
 find-unused-definitions = true
