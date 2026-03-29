@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace Tastaturberuf\ContaoDataContainerAccessor;
 
 use Override;
-use Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigSqlMethodInterface;
-use Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigSqlPropertyInterface;
+use Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigSql\ConfigSqlMethodInterface;
+use Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigSql\ConfigSqlPropertyInterface;
 
 use function array_replace;
 
 /**
  * @see https://docs.contao.org/dev/reference/dca/config/#sql-configuration
  */
-
 final class ConfigSql extends DynamicProperties implements ConfigSqlPropertyInterface, ConfigSqlMethodInterface
 {
     private readonly string $_table;

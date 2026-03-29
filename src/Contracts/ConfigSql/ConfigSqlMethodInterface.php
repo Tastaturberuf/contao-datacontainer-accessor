@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tastaturberuf\ContaoDataContainerAccessor\Contracts;
+namespace Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigSql;
 
 /**
  * @internal

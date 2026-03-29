@@ -8,9 +8,9 @@ use stdClass;
 use Tastaturberuf\ContaoDataContainerAccessor\ConfigSql;
 use TypeError;
 
-class ConfigSqlTest extends TestCase
+final class ConfigSqlTest extends TestCase
 {
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public function testWrongTypeInGlobalArray(): void
     {
         $GLOBALS['TL_DCA']['tl_test']['config']['sql']['engine'] = new StdClass();
@@ -19,7 +19,7 @@ class ConfigSqlTest extends TestCase
 
         $this->expectException(TypeError::class);
 
-        /** @mago-ignore analysis:unused-statement */
+        /** @mago-expect analysis:unused-statement */
         $sql->engine;
     }
 
