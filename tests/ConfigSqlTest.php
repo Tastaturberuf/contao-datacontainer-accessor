@@ -4,13 +4,25 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor\Tests;
 
-use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
-use PHPUnit\Framework\TestCase;
+use stdClass;
 use Tastaturberuf\ContaoDataContainerAccessor\ConfigSql;
+use TypeError;
 
-#[RunTestsInSeparateProcesses]
 class ConfigSqlTest extends TestCase
 {
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public function testWrongTypeInGlobalArray(): void
+    {
+        $GLOBALS['TL_DCA']['tl_test']['config']['sql']['engine'] = new StdClass();
+
+        $sql = new ConfigSql('tl_test');
+
+        $this->expectException(TypeError::class);
+
+        /** @mago-ignore analysis:unused-statement */
+        $sql->engine;
+    }
+
     public function testCanInstantiateClass(): void
     {
         $sql = new ConfigSql('tl_test');
@@ -54,7 +66,7 @@ class ConfigSqlTest extends TestCase
     {
         $sql = new ConfigSql('tl_test');
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         // property hook enforces ?string, so assigning an int should fail
         $invalid = self::mixed(123);
         $sql->engine = $invalid;
@@ -97,7 +109,7 @@ class ConfigSqlTest extends TestCase
     {
         $sql = new ConfigSql('tl_test');
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         $invalid = self::mixed(42.0);
         $sql->charset = $invalid;
     }
@@ -167,7 +179,7 @@ class ConfigSqlTest extends TestCase
     {
         $sql = new ConfigSql('tl_test');
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         $sql->keys = self::mixed('not-an-array');
     }
 
@@ -229,9 +241,7 @@ class ConfigSqlTest extends TestCase
     public function testFluentSetAndUnsetFromBaseClass(): void
     {
         $sql = new ConfigSql('tl_test');
-        $returned = $sql
-            ->set('foo', 'bar')
-            ->set('bar', 'baz');
+        $returned = $sql->set('foo', 'bar')->set('bar', 'baz');
 
         static::assertSame($sql, $returned);
         static::assertSame('bar', $sql->__get('foo'));
@@ -239,9 +249,7 @@ class ConfigSqlTest extends TestCase
         static::assertSame('baz', $sql->__get('bar'));
         static::assertSame('baz', $GLOBALS['TL_DCA']['tl_test']['config']['sql']['bar']);
 
-        $returned = $sql
-            ->unset('foo')
-            ->unset('bar');
+        $returned = $sql->unset('foo')->unset('bar');
 
         static::assertSame($sql, $returned);
         static::assertNull($sql->__get('foo'));
@@ -254,5 +262,4 @@ class ConfigSqlTest extends TestCase
     {
         return $v;
     }
-
 }
