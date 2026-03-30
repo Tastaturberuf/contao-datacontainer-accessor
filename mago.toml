@@ -31,8 +31,6 @@ halstead = { effort-threshold = 7000 }
 #too-many-methods = {enabled = false}
 
 [analyzer]
-# PHPUnit assertions may throw framework exceptions; treat them as unchecked in static throw analysis.
-unchecked-exceptions = ["PHPUnit\\Framework\\Exception"]
 # Enable all checks
 find-unused-expressions = true
 find-unused-definitions = true
@@ -51,18 +49,12 @@ strict-list-index-checks = true
 no-boolean-literal-comparison = true
 
 # Disable lenient behaviors
-allow-possibly-undefined-array-keys = true
 trust-existence-checks = false
 
-#find-unused-definitions = true
-#find-unused-expressions = false
-#analyze-dead-code = false
-#memoize-properties = true
-#allow-possibly-undefined-array-keys = true
-#check-throws = false
-#check-missing-override = true
-#find-unused-parameters = false
-#strict-list-index-checks = false
-#no-boolean-literal-comparison = false
-#check-missing-type-hints = false
-#register-super-globals = true
+## Project specific rules
+
+# PHPUnit assertions may throw framework exceptions; treat them as unchecked in static throw analysis.
+unchecked-exceptions = ["PHPUnit\\Framework\\Exception"]
+
+# The Contao DCA uses this a lot, so we allow that
+allow-possibly-undefined-array-keys = true
