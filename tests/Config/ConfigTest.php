@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tastaturberuf\ContaoDataContainerAccessor\Tests;
+namespace Tastaturberuf\ContaoDataContainerAccessor\Tests\Config;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tastaturberuf\ContaoDataContainerAccessor\CallbackBag;
-use Tastaturberuf\ContaoDataContainerAccessor\Config;
-use Tastaturberuf\ContaoDataContainerAccessor\ConfigCallbacks;
-use Tastaturberuf\ContaoDataContainerAccessor\ConfigSql;
+use Tastaturberuf\ContaoDataContainerAccessor\Config\Config;
+use Tastaturberuf\ContaoDataContainerAccessor\Config\ConfigCallbacks;
+use Tastaturberuf\ContaoDataContainerAccessor\Config\Sql;
+use Tastaturberuf\ContaoDataContainerAccessor\Tests\TestCase;
 
 final class ConfigTest extends TestCase
 {
@@ -647,7 +648,7 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
-        static::assertInstanceOf(ConfigSql::class, $config->sql);
+        static::assertInstanceOf(Sql::class, $config->sql);
     }
 
     #[DataProvider('dataProviderNull')]
@@ -679,7 +680,7 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
-        $config->sql(fn(ConfigSql $sql, string $table) => $sql->charset = 'utf8mb4');
+        $config->sql(fn(Sql $sql, string $table) => $sql->charset = 'utf8mb4');
 
         /** @mago-ignore analysis:mixed-array-access,mixed-array-access,mixed-array-access,mixed-array-access */
         static::assertSame('utf8mb4', $GLOBALS['TL_DCA']['tl_test']['config']['sql']['charset']);

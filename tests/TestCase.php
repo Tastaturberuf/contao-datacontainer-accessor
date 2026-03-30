@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor\Tests;
 
-class TestCase extends \PHPUnit\Framework\TestCase
+/**
+ * @internal
+ */
+abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
-
     protected function setUp(): void
     {
         unset($GLOBALS['TL_DCA']);
@@ -42,7 +44,9 @@ class TestCase extends \PHPUnit\Framework\TestCase
     {
         return [
             'empty string' => [''],
+            'empty string with spaces' => ['   '],
             'string' => ['string'],
+            'string multiple words' => ['lorem ipsum dolor sit amet'],
         ];
     }
 
@@ -87,5 +91,4 @@ class TestCase extends \PHPUnit\Framework\TestCase
             }],
         ];
     }
-
 }
