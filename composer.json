@@ -23,8 +23,8 @@
         "php": "^8.4"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest",
-        "phpunit/phpunit": "^11.0",
-        "kint-php/kint": "^6.0"
+        "carthage-software/mago": "^1.16",
+        "kint-php/kint": "^6.1",
+        "phpunit/phpunit": "^12.0"
     }
 }
