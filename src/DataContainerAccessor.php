@@ -4,23 +4,38 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor;
 
+use Closure;
+use Override;
 use Tastaturberuf\ContaoDataContainerAccessor\Callback\ConfigCallback;
 use Tastaturberuf\ContaoDataContainerAccessor\Callback\LabelCallback;
 use Tastaturberuf\ContaoDataContainerAccessor\Callback\ListCallback;
+use Tastaturberuf\ContaoDataContainerAccessor\Config\Config;
 
-final class DataContainerAccessor extends DynamicPropertiesInterface
+final class DataContainerAccessor extends DynamicProperties
 {
-
     private string $_table;
 
+    /**
+     * If you get it, you become every time a Config. If you set it, you can only use a Closure.
+     *
+     * @property Config
+     * @property-write Closure(Config $config, string $table): void
+     */
     public Config $config {
         get => $this->config ??= new Config($this->_table);
-        set(array|Config $value) {
-            $this->__set('config', $value);
+        set(Closure|Config $value) {
+            if (!$value instanceof Closure) {
+                throw new \TypeError('You can only set a Closure here');
+            }
+
+            $this->config($value);
         }
     }
 
-    public function config(callable $callback): self
+    /**
+     * @param Closure(Config $config, string $table): void $callback
+     */
+    public function config(Closure $callback): self
     {
         $callback($this->config, $this->_table);
 
