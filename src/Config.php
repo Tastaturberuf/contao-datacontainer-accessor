@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor;
 
+use Closure;
 use Override;
+use Tastaturberuf\ContaoDataContainerAccessor\Config\ConfigCallbacks;
+use Tastaturberuf\ContaoDataContainerAccessor\Config\Sql;
 
 /**
  * @see https://docs.contao.org/dev/reference/dca/config/
  */
 final class Config extends DynamicProperties
 {
-    private readonly string $_table;
+    public readonly string $_table;
 
     /**
      * The label is used with page or file trees and typically includes reference to the language array.
@@ -40,9 +43,9 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function ptable(?string $ptable): self
+    public function ptable(?string $table): self
     {
-        $this->ptable = $ptable;
+        $this->ptable = $table;
 
         return $this;
     }
@@ -54,23 +57,32 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function dynamicPtable(bool $dynamicPtable = true): self
+    public function dynamicPtable(bool $enabled = true): self
     {
-        $this->dynamicPtable = $dynamicPtable;
+        $this->dynamicPtable = $enabled;
 
         return $this;
     }
 
-    public ?array $ctable {
-        get => $this->_getNullableArray('ctable');
-        set {
-            $this->__set('ctable', $value);
+    public array $ctable {
+        get => $this->_getNullableArray('ctable') ?? [];
+        set(string|array $value) {
+            $this->__set('ctable', is_array($value) ? $value : [$value]);
         }
     }
 
-    public function ctable(?array $ctable): self
+    /**
+     * @param string|list<string> $table
+     */
+    public function ctable(string|array $table = [], string ...$tables): self
     {
-        $this->ctable = $ctable;
+        if (is_string($table)) {
+            $this->ctable = [$table, ...$tables];
+        }
+
+        if (is_array($table)) {
+            $this->ctable = [...$table, ...$tables];
+        }
 
         return $this;
     }
@@ -78,17 +90,26 @@ final class Config extends DynamicProperties
     public ?string $dataContainer {
         get => $this->_getNullableString('dataContainer');
         set {
+            if (null === $value) {
+                throw new \InvalidArgumentException(
+                    'You must not set the data container to null in ' . $this->_path('dataContainer'),
+                );
+            }
+
             $this->__set('dataContainer', $value);
         }
     }
 
-    public function dataContainer(?string $dataContainer = 'Contao\DC_Table'): self
+    public function dataContainer(string $class = 'Contao\DC_Table'): self
     {
-        $this->dataContainer = $dataContainer;
+        $this->dataContainer = $class;
 
         return $this;
     }
 
+    /**
+     * Appends “(copy)” to this field when copying a record.
+     */
     public ?string $markAsCopy {
         get => $this->_getNullableString('markAsCopy');
         set {
@@ -96,9 +117,12 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function markAsCopy(?string $markAsCopy): self
+    /**
+     * Appends “(copy)” to this field when copying a record.
+     */
+    public function markAsCopy(?string $field = null): self
     {
-        $this->markAsCopy = $markAsCopy;
+        $this->markAsCopy = $field;
 
         return $this;
     }
@@ -110,37 +134,54 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function uploadPath(?string $uploadPath): self
+    public function uploadPath(?string $path = null): self
     {
-        $this->uploadPath = $uploadPath;
+        $this->uploadPath = $path;
 
         return $this;
     }
 
     public ?string $validFileTypes {
         get => $this->_getNullableString('validFileTypes');
-        set {
+        set(null|string|array $value) {
+            $value = is_array($value) ? implode(',', $value) : $value;
             $this->__set('validFileTypes', $value);
         }
     }
 
-    public function validFileTypes(?string $validFileTypes): self
+    /**
+     * @param null|string|array<string> $extensions
+     * @todo add ...$append for straightforward appending?
+     */
+    public function validFileTypes(null|string|array $extensions = null): self
     {
-        $this->validFileTypes = $validFileTypes;
+        if (is_array($extensions)) {
+            $extensions = implode(',', $extensions);
+        }
+
+        $this->validFileTypes = $extensions;
 
         return $this;
     }
 
     public ?string $editableFileTypes {
         get => $this->_getNullableString('editableFileTypes');
-        set {
+        set(null|string|array $value) {
+            $value = is_array($value) ? implode(',', $value) : $value;
             $this->__set('editableFileTypes', $value);
         }
     }
 
-    public function editableFileTypes(?string $editableFileTypes): self
+    /**
+     * @param null|string|array<string> $extensions
+     */
+    public function editableFileTypes(null|string|array $extensions = null): self
     {
-        $this->editableFileTypes = $editableFileTypes;
+        if (is_array($extensions)) {
+            $extensions = implode(',', $extensions);
+        }
+
+        $this->editableFileTypes = $extensions;
 
         return $this;
     }
@@ -152,9 +193,9 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function databaseAssisted(bool $databaseAssisted = true): self
+    public function databaseAssisted(bool $enabled = true): self
     {
-        $this->databaseAssisted = $databaseAssisted;
+        $this->databaseAssisted = $enabled;
 
         return $this;
     }
@@ -166,9 +207,9 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function closed(bool $closed = true): self
+    public function closed(bool $enabled = true): self
     {
-        $this->closed = $closed;
+        $this->closed = $enabled;
 
         return $this;
     }
@@ -180,9 +221,9 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function notEditable(bool $notEditable = true): self
+    public function notEditable(bool $enabled = true): self
     {
-        $this->notEditable = $notEditable;
+        $this->notEditable = $enabled;
 
         return $this;
     }
@@ -194,9 +235,9 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function notDeletable(bool $notDeletable = true): self
+    public function notDeletable(bool $enabled = true): self
     {
-        $this->notDeletable = $notDeletable;
+        $this->notDeletable = $enabled;
 
         return $this;
     }
@@ -208,9 +249,9 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function notSortable(bool $notSortable = true): self
+    public function notSortable(bool $enabled = true): self
     {
-        $this->notSortable = $notSortable;
+        $this->notSortable = $enabled;
 
         return $this;
     }
@@ -222,9 +263,9 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function notCopyable(bool $notCopyable = true): self
+    public function notCopyable(bool $enabled = true): self
     {
-        $this->notCopyable = $notCopyable;
+        $this->notCopyable = $enabled;
 
         return $this;
     }
@@ -236,9 +277,9 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function notCreatable(bool $notCreatable = true): self
+    public function notCreatable(bool $enabled = true): self
     {
-        $this->notCreatable = $notCreatable;
+        $this->notCreatable = $enabled;
 
         return $this;
     }
@@ -250,9 +291,9 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function switchToEdit(bool $switchToEdit = true): self
+    public function switchToEdit(bool $enabled = true): self
     {
-        $this->switchToEdit = $switchToEdit;
+        $this->switchToEdit = $enabled;
 
         return $this;
     }
@@ -264,9 +305,23 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function enableVersioning(bool $enableVersioning = true): self
+    public function enableVersioning(bool $enabled = true): self
     {
-        $this->enableVersioning = $enableVersioning;
+        $this->enableVersioning = $enabled;
+
+        return $this;
+    }
+
+    public ?bool $hideVersionMenu {
+        get => $this->_getNullableBool('hideVersionMenu');
+        set {
+            $this->__set('hideVersionMenu', $value);
+        }
+    }
+
+    public function hideVersionMenu(bool $enabled = true): self
+    {
+        $this->hideVersionMenu = $enabled;
 
         return $this;
     }
@@ -278,9 +333,9 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function doNotCopyRecords(bool $doNotCopyRecords = true): self
+    public function doNotCopyRecords(bool $enabled = true): self
     {
-        $this->doNotCopyRecords = $doNotCopyRecords;
+        $this->doNotCopyRecords = $enabled;
 
         return $this;
     }
@@ -292,9 +347,9 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function doNotDeleteRecords(bool $doNotDeleteRecords = true): self
+    public function doNotDeleteRecords(bool $enabled = true): self
     {
-        $this->doNotDeleteRecords = $doNotDeleteRecords;
+        $this->doNotDeleteRecords = $enabled;
 
         return $this;
     }
@@ -306,21 +361,52 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function backlink(?string $backlink): self
+    /**
+     * @todo allow array?
+     * Optional query parameters for the back link, e.g. do=news.
+     */
+    public function backlink(?string $query = null): self
     {
-        $this->backlink = $backlink;
+        $this->backlink = $query;
 
         return $this;
     }
 
+    /**
+     * Only relevant when using `DC_Table` as data container. If true, the data is exempt from the backend search.
+     *
+     * @since Contao 5.7
+     */
+    public ?bool $backendSearchIgnore {
+        get => $this->_getNullableBool('backendSearchIgnore');
+        set {
+            $this->__set('backendSearchIgnore', $value);
+        }
+    }
+
+    /**
+     * Only relevant when using `DC_Table` as data container. If true, the data is exempt from the backend search.
+     *
+     * @since Contao 5.7
+     */
+    public function backendSearchIgnore(bool $enabled = true): self
+    {
+        $this->backendSearchIgnore = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * @todo find a better solution
+     */
     public ConfigCallbacks $callbacks {
         get => $this->callbacks ?? new ConfigCallbacks($this->_table);
     }
 
-    public array|ConfigSql $sql {
-        get => $this->sql ?? new ConfigSql($this->_table);
-        set(null|array|ConfigSql $value) {
-            if ($value instanceof ConfigSql) {
+    public array|Sql $sql {
+        get => $this->sql ?? new Sql($this->_table);
+        set(null|array|Sql $value) {
+            if ($value instanceof Sql) {
                 $this->sql = $value;
             } else {
                 $this->__set('sql', $value);
@@ -329,7 +415,7 @@ final class Config extends DynamicProperties
     }
 
     /**
-     * @param null|array|callable(ConfigSql $sql, string $table): void $callback
+     * @param null|array|callable(Sql $sql, string $table): void $callback
      */
     public function sql(null|array|callable $callback): self
     {
@@ -345,6 +431,11 @@ final class Config extends DynamicProperties
     public function __construct(string $table)
     {
         $this->_table = $table;
+    }
+
+    public static function create(string $table): self
+    {
+        return new static($table);
     }
 
     #[Override]
@@ -375,6 +466,16 @@ final class Config extends DynamicProperties
     public function __unset(string $name): void
     {
         unset($GLOBALS['TL_DCA'][$this->_table]['config'][$name]);
+    }
+
+    /**
+     * @param Closure(self $config, string $table): void $callback
+     */
+    public function __invoke(Closure $callback): self
+    {
+        $callback($this, $this->_table);
+
+        return $this;
     }
 
     #[Override]
