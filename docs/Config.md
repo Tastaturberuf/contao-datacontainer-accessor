@@ -1,10 +1,10 @@
 # `Config::class`
 
-The table configuration describes the table itself, e.g. which type of data container is used to store the data or how
-it relates to other tables. Also you can enable versioning or define what happens to child records when data is being
-edited or deleted.
+The table configuration describes the table itself, e.g. which type of data container stores the data or how it
+relates to other tables. You can also enable versioning or define what happens to child records when data is edited or
+deleted.
 
-## How to get or instantiate a `Config` class
+## How to instantiate `Config`
 
 ```php
 # contao/dca/tl_example.php
@@ -21,23 +21,22 @@ $config = new DataContainerAccessor('tl_example')->config;
 $config = DataContainerAccessor::create('tl_example')->config;
 ```
 
-Why is there a static `Config::create()` method? Because if you want to set something with a one liner, PHP dont allow
-that.
-So its best practice to stick with `Config::create()` method.
+Why is there a static `Config::create()` method? Because PHP does not allow writing to a property on a temporary
+expression.
+So if you want a one-liner, `Config::create()` is the preferred option.
 
 ```php
 // Fatal error: Cannot use temporary expression in write context
 new Config('tl_example')->enableVersioning = false;
 
 // This will work
-Config::create('tl_example')->enableVersiong = false;
+Config::create('tl_example')->enableVersioning = false;
 ```
 
 ## Properties and methods
 
-Properties are virtual property hooks and they are type safe. For each property exist a method with a default parameter
-and
-in some chases more smart secondary parameters.
+Properties are virtual property hooks and type-safe. For each property, there is a method with a default parameter and,
+in some cases, additional convenience parameters.
 
 **The methods are always fluid and you can chain them together if you like.**
 
@@ -62,8 +61,8 @@ $config->dynamicPtable(false); // Use false to disable it
 
 #### Property `array $ctable`
 
-To reorder, prepending or append, array unpacking is straightforward. Or use `array_merge()` if you are unfamilar with
-array unpacking.
+For reordering, prepending, or appending, array unpacking is straightforward. Or use `array_merge()` if you are
+unfamiliar with array unpacking.
 
 Read more about array unpacking: https://www.php.net/manual/en/language.types.array.php#language.types.array.unpacking
 
@@ -72,35 +71,35 @@ $config->ctable; // returns always an array
 
 $config->ctable = ['tl_child']; // has to be an array because you can have more child tables
 $config->ctable = 'tl_child';   // casts to array ['tl_child']
-$config->ctable = [];         // unset child tables
+$config->ctable = []; // unset child tables
 
 // merge with existing tables
-$config->ctable = array_merge(['tl_first'], $this->ctable, ['tl_content']);
+$config->ctable = array_merge(['tl_first'], $config->ctable, ['tl_content']);
 // same with array unpacking
-$config->ctable = ['tl_first', ...$this->ctable, 'tl_content'];
+$config->ctable = ['tl_first', ...$config->ctable, 'tl_content'];
 ```
 
-#### Method `ctable(string|array $table, ...string $tables): Config`
+#### Method `ctable(string|array $table = [], ...string $tables): Config`
 
 ```php
 $config->ctable('tl_child');                        // set one
-$config->ctable('tl_child', 'tl_content', 'tl_foo') // set as many as you need
+$config->ctable('tl_child', 'tl_content', 'tl_foo');  // set as many as you need
 $config->ctable();                                    // unset
 
-$config->ctable($config->ctable, 'tl_last');                 // add array on last position, mostly fits best
-$config->ctable(['tl_first', ...$config->ctable, 'tl_last']); // if you want to set more than one table merge them in an array
+$config->ctable($config->ctable, 'tl_last');                  // append one table
+$config->ctable(['tl_first', ...$config->ctable, 'tl_last']); // merge manually if you want to prepend and append
 ```
 
 ### dataContainer
 
-#### Property `null|string $dataContainer`
+#### Property `?string $dataContainer`
 
 ```php
 $config->dataContainer = DC_Table::class;
 $config->dataContainer = DC_Folder::class;
 $config->dataContainer = DC_File::class;
 
-$config->dataContainer = null; // InvalidArgumentException
+$config->dataContainer = null; // throws InvalidArgumentException
 ```
 
 #### Method `dataContainer(string $class = 'Contao\DC_Table'): Config`
@@ -136,7 +135,7 @@ $config->uploadPath = '/path';
 $config->uploadPath = null; 
 ```
 
-#### Method `uploadPath(?null $path = null): Config`
+#### Method `uploadPath(?string $path = null): Config`
 
 ```php
 $config->uploadPath('/path');
@@ -166,17 +165,17 @@ $config->validFileTypes();  // reset because null is default value
 #### Property `?string $editableFileTypes = null`
 
 ```php
-$config->validFileTypes = 'txt,php,js';
-$config->validFileTypes = ['txt', 'php', 'js'];
-$config->validFileTypes = null;
+$config->editableFileTypes = 'txt,php,js';
+$config->editableFileTypes = ['txt', 'php', 'js'];
+$config->editableFileTypes = null;
 ```
 
 #### Method `editableFileTypes(null|string|array $extensions = null): Config`
 
 ```php
-$config->validFileTypes('txt,php,js');
-$config->validFileTypes(['txt', 'php', 'js']);
-$config->validFileTypes();  // reset because null is default value
+$config->editableFileTypes('txt,php,js');
+$config->editableFileTypes(['txt', 'php', 'js']);
+$config->editableFileTypes(); // reset because null is default value
 ```
 
 ### databaseAssisted
@@ -388,6 +387,25 @@ $config->doNotCopyRecords(false);
 
 ---
 
+### doNotDeleteRecords
+
+#### Property `?bool $doNotDeleteRecords = null`
+
+```php
+$config->doNotDeleteRecords = true;
+$config->doNotDeleteRecords = false;
+$config->doNotDeleteRecords = null;
+```
+
+#### Method `doNotDeleteRecords(bool $enabled = true): Config`
+
+```php
+$config->doNotDeleteRecords(); // true
+$config->doNotDeleteRecords(false);
+```
+
+---
+
 ### backlink
 
 #### Property `?string $backlink = null`
@@ -400,8 +418,8 @@ $config->backlink = null;
 #### Method `backlink(?string $query = null): Config`
 
 ```php
-$config->doNotCopyRecords('do=news');
-$config->doNotCopyRecords(); // reset: default null
+$config->backlink('do=news');
+$config->backlink(); // reset: default null
 ```
 
 ---
@@ -453,14 +471,13 @@ $GLOBALS['TL_DCA']['tl_example']['config'] = [
 
 ### Properties
 
-Properties are very robust, because they are type safe and easy to learn. Just use the normal DCA syntax and adapt it to
-properties.
+Properties are type-safe and easy to learn. Use the regular DCA syntax and map it to properties.
 
 ```php
 // contao/dca/tl_example.php
 
 use Contao\DC_Table;
-use Tastaturberuf\ContaoDataContainerAccessor\Config\Config;
+use Tastaturberuf\ContaoDataContainerAccessor\Config;
 
 $config = new Config('tl_example');
 
@@ -470,14 +487,13 @@ $config = Config::create('tl_example');
 
 $config->dataContainer = DC_Table::class;
 $config->enableVersioning = true;
-$condig->sql->keys->id = 'primary';
+$config->sql->keys->id = 'primary';
 ```
 
 ### Fluid
 
-With property hooks you tend to repeat many properties if you have a low to configure. To get rid of that you can use
-the fluid methods. Lots of them are filled with usally used defaults and many of them have more then one parameter to
-change thing thats are set together.
+With property hooks, you may repeat `$config->...` many times. To reduce that, use the fluent methods. Many methods
+have practical defaults and some allow changing multiple related values.
 
 ```php
 // contao/dca/tl_example.php
