@@ -72,6 +72,21 @@ final class ConfigTest extends TestCase
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['label']);
     }
 
+    public function testLabelPropertySupportsArrowFunctionReference(): void
+    {
+        $config = new Config('tl_test');
+        /** @mago-expect analysis:mixed-array-assignment */
+        $GLOBALS['TL_LANG']['tl_test']['label'] = 'foo';
+
+        $config->label = static fn&() => $GLOBALS['TL_LANG']['tl_test']['label'];
+
+        /** @mago-expect analysis:mixed-array-assignment */
+        $GLOBALS['TL_LANG']['tl_test']['label'] = 'bar';
+
+        static::assertSame('bar', $GLOBALS['TL_DCA']['tl_test']['config']['label']);
+        static::assertSame('bar', $config->label);
+    }
+
     #[DataProvider('dataProviderNull')]
     #[DataProvider('dataProviderString')]
     public function testPtableProperty(?string $value): void

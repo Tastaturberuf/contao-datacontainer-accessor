@@ -26,9 +26,14 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function label(?string $label = null): self
+    /**
+     * The label is used with page or file trees and typically includes reference to the language array.
+     *
+     * @mago-expect analysis:mixed-array-assignment
+     */
+    public function label(?string &$label = null): self
     {
-        $this->label = $label;
+        $GLOBALS['TL_DCA'][$this->_table]['config']['label'] = &$label;
 
         return $this;
     }
@@ -43,6 +48,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * Name of the related parent table `table.pid = ptable.id`.
+     */
     public function ptable(?string $table = null): self
     {
         $this->ptable = $table;
@@ -50,6 +58,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * Dynamically set the parent table like in `tl_content`.
+     */
     public ?bool $dynamicPtable {
         get => $this->_getNullableBool('dynamicPtable');
         set {
@@ -57,6 +68,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * Dynamically set the parent table like in `tl_content`.
+     */
     public function dynamicPtable(bool $enabled = true): self
     {
         $this->dynamicPtable = $enabled;
@@ -64,6 +78,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * Name of the related child tables `table.id = ctable.pid`.
+     */
     public array $ctable {
         get => $this->_getNullableArray('ctable') ?? [];
         set(string|array $value) {
@@ -72,6 +89,8 @@ final class Config extends DynamicProperties
     }
 
     /**
+     * Name of the related child tables `table.id = ctable.pid`.
+     *
      * @param string|list<string> $table
      */
     public function ctable(string|array $table = [], string ...$tables): self
@@ -87,6 +106,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * `\Contao\DC_Table` (database table), `\Contao\DC_File` (local configuration file) or `\Contao\DC_Folder` (file manager).
+     */
     public ?string $dataContainer {
         get => $this->_getNullableString('dataContainer');
         set {
@@ -100,7 +122,10 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function dataContainer(string $class = 'Contao\DC_Table'): self
+    /**
+     * `\Contao\DC_Table` (database table), `\Contao\DC_File` (local configuration file) or `\Contao\DC_Folder` (file manager).
+     */
+    public function dataContainer(string $class = '\Contao\DC_Table'): self
     {
         $this->dataContainer = $class;
 
@@ -127,6 +152,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * Path to the root folder of the file manager.
+     */
     public ?string $uploadPath {
         get => $this->_getNullableString('uploadPath');
         set {
@@ -134,6 +162,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * Path to the root folder of the file manager.
+     */
     public function uploadPath(?string $path = null): self
     {
         $this->uploadPath = $path;
@@ -141,15 +172,20 @@ final class Config extends DynamicProperties
         return $this;
     }
 
-    public ?string $validFileTypes {
+    /**
+     * Limits the file manager to certain file types (comma separated list).
+     */
+    public null|string|array $validFileTypes {
         get => $this->_getNullableString('validFileTypes');
-        set(null|string|array $value) {
+        set {
             $value = is_array($value) ? implode(',', $value) : $value;
             $this->__set('validFileTypes', $value);
         }
     }
 
     /**
+     * Limits the file manager to certain file types (comma separated list).
+     *
      * @param null|string|array<string> $extensions
      * @todo add ...$append for straightforward appending?
      */
@@ -164,6 +200,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * Limits the file types that can be edited with the source code editor (comma separated list).
+     */
     public ?string $editableFileTypes {
         get => $this->_getNullableString('editableFileTypes');
         set(null|string|array $value) {
@@ -173,6 +212,8 @@ final class Config extends DynamicProperties
     }
 
     /**
+     * Limits the file types that can be edited with the source code editor (comma separated list).
+     *
      * @param null|string|array<string> $extensions
      */
     public function editableFileTypes(null|string|array $extensions = null): self
@@ -186,6 +227,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * If `true`, the file manager is synchronized with a database table.
+     */
     public ?bool $databaseAssisted {
         get => $this->_getNullableBool('databaseAssisted');
         set {
@@ -193,6 +237,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * If `true`, the file manager is synchronized with a database table.
+     */
     public function databaseAssisted(bool $enabled = true): self
     {
         $this->databaseAssisted = $enabled;
@@ -200,6 +247,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * If `true`, you cannot add further records to the table.
+     */
     public ?bool $closed {
         get => $this->_getNullableBool('closed');
         set {
@@ -207,6 +257,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * If `true`, you cannot add further records to the table.
+     */
     public function closed(bool $enabled = true): self
     {
         $this->closed = $enabled;
@@ -214,6 +267,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * If `true`, the table cannot be edited.
+     */
     public ?bool $notEditable {
         get => $this->_getNullableBool('notEditable');
         set {
@@ -221,6 +277,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * If `true`, the table cannot be edited.
+     */
     public function notEditable(bool $enabled = true): self
     {
         $this->notEditable = $enabled;
@@ -228,6 +287,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * If `true`, records in the table cannot be deleted.
+     */
     public ?bool $notDeletable {
         get => $this->_getNullableBool('notDeletable');
         set {
@@ -235,6 +297,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * If `true`, records in the table cannot be deleted.
+     */
     public function notDeletable(bool $enabled = true): self
     {
         $this->notDeletable = $enabled;
@@ -242,6 +307,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * If `true`, records in the table cannot be sorted.
+     */
     public ?bool $notSortable {
         get => $this->_getNullableBool('notSortable');
         set {
@@ -249,6 +317,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * If `true`, records in the table cannot be sorted.
+     */
     public function notSortable(bool $enabled = true): self
     {
         $this->notSortable = $enabled;
@@ -256,6 +327,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * If `true`, records in the table cannot be duplicated.
+     */
     public ?bool $notCopyable {
         get => $this->_getNullableBool('notCopyable');
         set {
@@ -263,6 +337,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * If `true`, records in the table cannot be duplicated.
+     */
     public function notCopyable(bool $enabled = true): self
     {
         $this->notCopyable = $enabled;
@@ -270,6 +347,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * If `true, records in the table cannot be created but can be duplicated.
+     */
     public ?bool $notCreatable {
         get => $this->_getNullableBool('notCreatable');
         set {
@@ -277,6 +357,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * If `true`, records in the table cannot be created but can be duplicated.
+     */
     public function notCreatable(bool $enabled = true): self
     {
         $this->notCreatable = $enabled;
@@ -284,6 +367,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * Activates the “save and edit” button when a new record is added (sorting mode 4 only).
+     */
     public ?bool $switchToEdit {
         get => $this->_getNullableBool('switchToEdit');
         set {
@@ -291,6 +377,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * Activates the “save and edit” button when a new record is added (sorting mode 4 only).
+     */
     public function switchToEdit(bool $enabled = true): self
     {
         $this->switchToEdit = $enabled;
@@ -298,6 +387,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * If `true`, Contao saves the old version of a record when a new version is created.
+     */
     public ?bool $enableVersioning {
         get => $this->_getNullableBool('enableVersioning');
         set {
@@ -305,6 +397,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * If `true`, Contao saves the old version of a record when a new version is created.
+     */
     public function enableVersioning(bool $enabled = true): self
     {
         $this->enableVersioning = $enabled;
@@ -312,6 +407,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * If `true`, the version dropdown is hidden.
+     */
     public ?bool $hideVersionMenu {
         get => $this->_getNullableBool('hideVersionMenu');
         set {
@@ -319,6 +417,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * If `true`, the version dropdown is hidden.
+     */
     public function hideVersionMenu(bool $enabled = true): self
     {
         $this->hideVersionMenu = $enabled;
@@ -326,6 +427,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * If `true`, Contao will not duplicate records of the current table when a record of its parent table is duplicated.
+     */
     public ?bool $doNotCopyRecords {
         get => $this->_getNullableBool('doNotCopyRecords');
         set {
@@ -333,6 +437,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * If `true`, Contao will not duplicate records of the current table when a record of its parent table is duplicated.
+     */
     public function doNotCopyRecords(bool $enabled = true): self
     {
         $this->doNotCopyRecords = $enabled;
@@ -340,6 +447,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * If `true`, Contao will not delete records of the current table when a record of its parent table is deleted.
+     */
     public ?bool $doNotDeleteRecords {
         get => $this->_getNullableBool('doNotDeleteRecords');
         set {
@@ -347,6 +457,9 @@ final class Config extends DynamicProperties
         }
     }
 
+    /**
+     * If `true`, Contao will not delete records of the current table when a record of its parent table is deleted.
+     */
     public function doNotDeleteRecords(bool $enabled = true): self
     {
         $this->doNotDeleteRecords = $enabled;
@@ -354,6 +467,9 @@ final class Config extends DynamicProperties
         return $this;
     }
 
+    /**
+     * Optional query parameters for the backlink, e.g. `do=news`.
+     */
     public ?string $backlink {
         get => $this->_getNullableString('backlink');
         set {
@@ -362,8 +478,9 @@ final class Config extends DynamicProperties
     }
 
     /**
+     * Optional query parameters for the backlink, e.g. `do=news`.
+     *
      * @todo allow array?
-     * Optional query parameters for the back link, e.g. do=news.
      */
     public function backlink(?string $query = null): self
     {
@@ -373,7 +490,7 @@ final class Config extends DynamicProperties
     }
 
     /**
-     * Only relevant when using `DC_Table` as data container. If true, the data is exempt from the backend search.
+     * Only relevant when using `DC_Table` as data container. If `true`, the data is exempt from the backend search.
      *
      * @since Contao 5.7
      */
@@ -385,7 +502,7 @@ final class Config extends DynamicProperties
     }
 
     /**
-     * Only relevant when using `DC_Table` as data container. If true, the data is exempt from the backend search.
+     * Only relevant when using `DC_Table` as data container. If `true`, the data is exempt from the backend search.
      *
      * @since Contao 5.7
      */

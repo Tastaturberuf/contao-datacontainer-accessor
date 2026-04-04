@@ -42,23 +42,32 @@ in some cases, additional convenience parameters.
 
 ### label
 
+The label is used with page or file trees and typically includes reference to the language array.
+
 #### Property `?string $label = null`
 
+Property hooks can not set references, if you want to set a reference use the `label()` method.
+
+See: https://docs.contao.org/5.x/dev/framework/translations/#accessing-translations
+
 ```php
-$config->label = 'tl_example.title';
+// get $translator from DI or Service Container
+$config->label = $translator->trans('config.label', [], 'contao_tl_example'); 
 $config->label = null;
 ```
 
-#### Method `label(?string $label = null): Config`
+#### Method `label(?string &$label = null): Config`
 
 ```php
-$config->label('tl_example.title');
+$config->label($GLOBALS['TL_LANG'][$config->_table]['config']['label']); // reference
 $config->label(); // default null
 ```
 
 ---
 
 ### ptable
+
+Name of the related parent table `table.pid = ptable.id)`.
 
 #### Property `?string $ptable = null`
 
@@ -78,6 +87,8 @@ $config->ptable(); // default null
 
 ### dynamicPtable
 
+Dynamically set the parent table like in `tl_content`.
+
 #### Property `?bool $dynamicPtable = null`
 
 ```php
@@ -96,6 +107,8 @@ $config->dynamicPtable(false);
 ---
 
 ### ctable
+
+Name of the related child tables `table.id = ctable.pid`.
 
 #### Property `array $ctable`
 
@@ -130,6 +143,8 @@ $config->ctable(['tl_first', ...$config->ctable, 'tl_last']); // merge manually 
 
 ### dataContainer
 
+`\Contao\DC_Table` (database table), `\Contao\DC_File` (local configuration file) or `\Contao\DC_Folder` (file manager).
+
 #### Property `?string $dataContainer`
 
 ```php
@@ -140,7 +155,7 @@ $config->dataContainer = DC_File::class;
 $config->dataContainer = null; // throws InvalidArgumentException
 ```
 
-#### Method `dataContainer(string $class = 'Contao\DC_Table'): Config`
+#### Method `dataContainer(string $class = '\Contao\DC_Table'): Config`
 
 ```php
 $config->dataContainer(); // set to DC_Table, most used case
@@ -149,6 +164,8 @@ $config->dataContainer(DC_File::class);
 ```
 
 ### markAsCopy
+
+Appends “(copy)” to this field when copying a record.
 
 #### Property `null|string $markAsCopy = null`
 
@@ -166,6 +183,8 @@ $config->markAsCopy(); // set to null as default
 
 ### uploadPath
 
+Path to the root folder of the file manager.
+
 #### Property `null|string $uploadPath = null`
 
 ```php
@@ -181,6 +200,8 @@ $config->uploadPath(); // set to null as default
 ```
 
 ### validFileTypes
+
+Limits the file manager to certain file types (comma separated list).
 
 #### Property `?string $validFileTypes = null`
 
@@ -200,6 +221,8 @@ $config->validFileTypes();  // reset because null is default value
 
 ### editableFileTypes
 
+Limits the file types that can be edited with the source code editor (comma separated list).
+
 #### Property `?string $editableFileTypes = null`
 
 ```php
@@ -217,6 +240,8 @@ $config->editableFileTypes(); // reset because null is default value
 ```
 
 ### databaseAssisted
+
+If `true, the file manager is synchronized with a database table.
 
 #### Property `?bool $databaseAssisted = null`
 
@@ -237,6 +262,8 @@ $config->databaseAssisted(false);
 
 ### closed
 
+If `true`, you cannot add further records to the table.
+
 #### Property `?bool $closed = null`
 
 ```php
@@ -255,6 +282,8 @@ $config->closed(false);
 ---
 
 ### notEditable
+
+If `true`, the table cannot be edited.
 
 #### Property `?bool $notEditable = null`
 
@@ -275,6 +304,8 @@ $config->notEditable(false);
 
 ### notDeletable
 
+If `true`, records in the table cannot be deleted.
+
 #### Property `?bool $notDeletable = null`
 
 ```php
@@ -293,6 +324,8 @@ $config->notDeletable(false);
 ---
 
 ### notSortable
+
+If `true`, records in the table cannot be sorted.
 
 #### Property `?bool $notSortable = null`
 
@@ -313,6 +346,8 @@ $config->notSortable(false);
 
 ### notCopyable
 
+If `true`, records in the table cannot be duplicated.
+
 #### Property `?bool $notCopyable = null`
 
 ```php
@@ -331,6 +366,8 @@ $config->notCopyable(false);
 ---
 
 ### notCreatable
+
+If `true`, records in the table cannot be created but can be duplicated.
 
 #### Property `?bool $notCreatable = null`
 
@@ -351,6 +388,8 @@ $config->notCreatable(false);
 
 ### switchToEdit
 
+Activates the “save and edit” button when a new record is added (sorting mode 4 only).
+
 #### Property `?bool $switchToEdit = null`
 
 ```php
@@ -369,6 +408,8 @@ $config->switchToEdit(false);
 ---
 
 ### enableVersioning
+
+If `true`, Contao saves the old version of a record when a new version is created.
 
 #### Property `?bool $enableVersioning = null`
 
@@ -389,6 +430,8 @@ $config->enableVersioning(false);
 
 ### hideVersionMenu
 
+If `true`, the version dropdown is hidden.
+
 #### Property `?bool $hideVersionMenu = null`
 
 ```php
@@ -407,6 +450,8 @@ $config->hideVersionMenu(false);
 ---
 
 ### doNotCopyRecords
+
+If `true`, Contao will not duplicate records of the current table when a record of its parent table is duplicated.
 
 #### Property `?bool $doNotCopyRecords = null`
 
@@ -427,6 +472,8 @@ $config->doNotCopyRecords(false);
 
 ### doNotDeleteRecords
 
+If `true`, Contao will not delete records of the current table when a record of its parent table is deleted.
+
 #### Property `?bool $doNotDeleteRecords = null`
 
 ```php
@@ -446,6 +493,8 @@ $config->doNotDeleteRecords(false);
 
 ### backlink
 
+Optional query parameters for the backlink, e.g. `do=news`.
+
 #### Property `?string $backlink = null`
 
 ```php
@@ -463,6 +512,8 @@ $config->backlink(); // reset: default null
 ---
 
 ### backendSearchIgnore
+
+Only relevant when using `DC_Table` as data container. If `true`, the data is exempt from the backend search.
 
 Since Contao 5.7
 
