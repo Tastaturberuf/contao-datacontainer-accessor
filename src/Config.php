@@ -26,7 +26,7 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function label(?string $label): self
+    public function label(?string $label = null): self
     {
         $this->label = $label;
 
@@ -43,7 +43,7 @@ final class Config extends DynamicProperties
         }
     }
 
-    public function ptable(?string $table): self
+    public function ptable(?string $table = null): self
     {
         $this->ptable = $table;
 

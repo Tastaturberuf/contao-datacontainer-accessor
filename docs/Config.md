@@ -40,22 +40,60 @@ in some cases, additional convenience parameters.
 
 **The methods are always fluid and you can chain them together if you like.**
 
+### label
+
+#### Property `?string $label = null`
+
 ```php
-// @todo test for references support and nicer syntax
-$config->label = 'sdsdsd';
-$config->label();
+$config->label = 'tl_example.title';
+$config->label = null;
 ```
+
+#### Method `label(?string $label = null): Config`
+
+```php
+$config->label('tl_example.title');
+$config->label(); // default null
+```
+
+---
+
+### ptable
+
+#### Property `?string $ptable = null`
 
 ```php
 $config->ptable = 'tl_parent';
-$config->ptable('tl_parent');
+$config->ptable = null;
 ```
+
+#### Method `ptable(?string $table = null): Config`
+
+```php
+$config->ptable('tl_parent');
+$config->ptable(); // default null
+```
+
+---
+
+### dynamicPtable
+
+#### Property `?bool $dynamicPtable = null`
 
 ```php
 $config->dynamicPtable = true;
-$config->dynamicPtable(); // default parameter is true
-$config->dynamicPtable(false); // Use false to disable it
+$config->dynamicPtable = false;
+$config->dynamicPtable = null;
 ```
+
+#### Method `dynamicPtable(bool $enabled = true): Config`
+
+```php
+$config->dynamicPtable(); // true
+$config->dynamicPtable(false);
+```
+
+---
 
 ### ctable
 
@@ -442,12 +480,6 @@ $config->backendSearchIgnore = null;
 $config->backendSearchIgnore(); // true
 $config->backendSearchIgnore(false);
 ```
-
----
-
-TODO
-
----
 
 ## Examples
 
