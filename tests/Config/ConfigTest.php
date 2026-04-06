@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor\Tests\Config;
 
+use Error;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use stdClass;
 use Tastaturberuf\ContaoDataContainerAccessor\CallbackBag;
 use Tastaturberuf\ContaoDataContainerAccessor\Config;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\ConfigCallbacks;
@@ -13,6 +16,7 @@ use Tastaturberuf\ContaoDataContainerAccessor\Tests\TestCase;
 
 /**
  * @mago-expect analysis:mixed-array-access
+ * @mago-expect lint:no-global
  */
 final class ConfigTest extends TestCase
 {
@@ -30,7 +34,7 @@ final class ConfigTest extends TestCase
         static::assertInstanceOf(Config::class, $config);
     }
 
-    public function testInvoke(): void
+    public function testInvokeMethod(): void
     {
         $config = new Config('tl_test');
 
@@ -38,6 +42,21 @@ final class ConfigTest extends TestCase
             static::assertSame($config, $innerConfig);
             static::assertSame('tl_test', $table);
         });
+    }
+
+    /**
+     * @mago-expect analysis:mixed-array-assignment
+     */
+    public function testInvalidSetterMethod(): void
+    {
+        $GLOBALS['TL_DCA']['tl_test']['config'] = new StdClass();
+
+        $config = new Config('tl_test');
+
+        $this->expectException(Error::class);
+        $config->label = 'test';
+
+        d($config->label);
     }
 
     public function testOneLineSetWithCreate(): void
@@ -202,7 +221,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         if ($value === null) {
-            $this->expectException(\InvalidArgumentException::class);
+            $this->expectException(InvalidArgumentException::class);
         }
 
         $config->dataContainer = $value;
@@ -675,7 +694,7 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
-        // make sure this is only a virtual property
+        // make sure this is only a dynamic property
         static::assertObjectNotHasProperty('dynamicProperty', $config);
 
         /** @mago-expect analysis:non-documented-property */
@@ -685,14 +704,14 @@ final class ConfigTest extends TestCase
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['dynamicProperty']);
 
         if (is_null($value)) {
-            static::assertFalse($config->isset('dynamicProperty'));
+            static::assertFalse($config->__isset('dynamicProperty'));
         } else {
-            static::assertTrue($config->isset('dynamicProperty'));
+            static::assertTrue($config->__isset('dynamicProperty'));
         }
 
-        $config->unset('dynamicProperty');
+        $config->__unset('dynamicProperty');
 
-        static::assertFalse($config->isset('dynamicProperty'));
+        static::assertFalse($config->__isset('dynamicProperty'));
         static::assertNull($config->dynamicProperty);
 
         /** @mago-expect analysis:mixed-argument */
@@ -707,7 +726,7 @@ final class ConfigTest extends TestCase
         static::assertSame('tl_parent', $config->ptable);
         static::assertSame('tl_parent', $GLOBALS['TL_DCA']['tl_test']['config']['ptable']);
 
-        $config->unset('ptable');
+        $config->__unset('ptable');
 
         /** @mago-expect analysis:impossible-type-comparison */
         static::assertNull($config->ptable);
@@ -774,15 +793,5 @@ final class ConfigTest extends TestCase
         });
 
         static::assertSame('utf8mb4', $GLOBALS['TL_DCA']['tl_test']['config']['sql']['charset']);
-    }
-
-    public function testPath(): void
-    {
-        $config = new Config('tl_test');
-
-        /** @mago-ignore analysis:all */
-        $path = invade($config)->_path('test');
-
-        self::assertSame("\$GLOBALS['TL_DCA']['tl_test']['config']['test']", $path);
     }
 }
