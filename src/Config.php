@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Override;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\ConfigCallbacks;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\Sql;
+use Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigInterface;
 
 /**
  * @see https://docs.contao.org/dev/reference/dca/config/
@@ -16,17 +17,24 @@ use Tastaturberuf\ContaoDataContainerAccessor\Config\Sql;
  * @mago-expect analysis:incompatible-property-access
  * @mago-expect lint:no-global
  */
-final class Config extends AbstractAccessor
+final class Config extends AbstractAccessor implements ConfigInterface
 {
     public readonly string $_table;
     public readonly array $_path;
 
     /**
      * The label is used with page or file trees and typically includes reference to the language array.
+     *
+     * @mago-expect analysis:mixed-array-assignment
      */
     public ?string $label {
         get => $this->getNullableString('label');
-        set {
+        set(null|string|Closure $value) {
+            if ($value instanceof Closure) {
+                $GLOBALS['TL_DCA'][$this->_table]['config']['label'] = &$value();
+                return;
+            }
+
             $this->__set('label', $value);
         }
     }
@@ -86,9 +94,9 @@ final class Config extends AbstractAccessor
     /**
      * Name of the related child tables `table.id = ctable.pid`.
      */
-    public array $ctable {
+    public ?array $ctable {
         get => $this->getNullableArray('ctable') ?? [];
-        set(string|array $value) {
+        set(null|string|array $value) {
             $this->__set('ctable', is_array($value) ? $value : [$value]);
         }
     }
@@ -523,14 +531,15 @@ final class Config extends AbstractAccessor
         get => $this->callbacks ?? new ConfigCallbacks($this->_table);
     }
 
-    public array|Sql $sql {
+    public Sql $sql {
         get => $this->sql ?? new Sql($this->_table);
         set(null|array|Sql $value) {
             if ($value instanceof Sql) {
                 $this->sql = $value;
-            } else {
-                $this->__set('sql', $value);
+                return;
             }
+
+            $this->__set('sql', $value);
         }
     }
 

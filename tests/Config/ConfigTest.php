@@ -13,6 +13,7 @@ use Tastaturberuf\ContaoDataContainerAccessor\Config;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\ConfigCallbacks;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\Sql;
 use Tastaturberuf\ContaoDataContainerAccessor\Tests\TestCase;
+use function Tastaturberuf\ContaoDataContainerAccessor\ref;
 
 /**
  * @mago-expect analysis:mixed-array-access
@@ -76,6 +77,21 @@ final class ConfigTest extends TestCase
 
         static::assertSame($value, $config->label);
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['label']);
+    }
+
+    public function testLabelPropertyWithRefHelper(): void
+    {
+        $config = new Config('tl_test');
+
+        $GLOBALS['TL_LANG']['tl_test']['config']['label'] = 'initial';
+        $config->label = ref($GLOBALS['TL_LANG']['tl_test']['config']['label']);
+
+        static::assertSame('initial', $GLOBALS['TL_DCA']['tl_test']['config']['label']);
+
+        $GLOBALS['TL_LANG']['tl_test']['config']['label'] = 'changed';
+
+        static::assertSame('changed', $GLOBALS['TL_DCA']['tl_test']['config']['label']);
+        static::assertSame('changed', $config->label);
     }
 
     #[DataProvider('dataProviderNull')]

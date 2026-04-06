@@ -46,13 +46,16 @@ The label is used with page or file trees and typically includes reference to th
 
 #### Property `?string $label = null`
 
-Property hooks can not set references, if you want to set a reference use the `label()` method.
+Property hooks can not set references, if you want to set a reference use the `label()` method or the `ref()` helper.
 
 See: https://docs.contao.org/5.x/dev/framework/translations/#accessing-translations
 
 ```php
+use function Tastaturberuf\ContaoDataContainerAccessor\ref;
+
 // get $translator from DI or Service Container
-$config->label = $translator->trans('config.label', [], 'contao_tl_example'); 
+$config->label = $translator->trans('config.label', [], 'contao_tl_example');
+$config->label = ref($GLOBALS['TL_LANG'][$config->_table]['config']['label']); // reference
 $config->label = null;
 ```
 
