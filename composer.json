@@ -25,6 +25,7 @@
     "require-dev": {
         "carthage-software/mago": "^1.16",
         "kint-php/kint": "^6.1",
-        "phpunit/phpunit": "^12.0"
+        "phpunit/phpunit": "^12.0",
+        "spatie/invade": "^2.1"
     }
 }
