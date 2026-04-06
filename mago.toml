@@ -24,11 +24,17 @@ ambiguous-function-call = { enabled = false }
 literal-named-argument = { enabled = false }
 halstead = { effort-threshold = 7000 }
 
+#enable when version is higher > 1.16.0
+no-fully-qualified-global-function = { enabled = true }
+no-fully-qualified-global-constant = { enabled = true }
+no-fully-qualified-global-class-like = { enabled = true }
+ambiguous-constant-access = { enabled = true }
+
 # Contao specific rules
 #no-global = {enabled = false}
 #no-boolean-flag-parameter = {enabled = false}
-#too-many-properties = {enabled = false}
-#too-many-methods = {enabled = false}
+too-many-properties = {enabled = false}
+too-many-methods = {enabled = false}
 
 [analyzer]
 # Enable all checks
