@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor\Tests;
 
+use Override;
+use PHPUnit\Framework\TestCase as PhpUnitTestCase;
+
+use const PHP_INT_MAX;
+
 /**
  * @internal
  */
-abstract class TestCase extends \PHPUnit\Framework\TestCase
+abstract class TestCase extends PhpUnitTestCase
 {
+    #[Override]
     protected function setUp(): void
     {
         unset($GLOBALS['TL_DCA']);
@@ -77,11 +83,12 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /** @mago-expect lint:prefer-static-closure */
     public static function dataProviderCallable(): array
     {
         return [
-            'closure' => [fn() => true],
-            'static closure' => [static fn() => true],
+            'closure' => [fn(): true => true],
+            'static closure' => [static fn(): true => true],
             'first class callable' => [strlen(...)],
             'instance callable' => [new class {
                 public function __invoke(): bool

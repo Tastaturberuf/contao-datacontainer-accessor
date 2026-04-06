@@ -2,32 +2,31 @@
 
 declare(strict_types=1);
 
-namespace Tastaturberuf\ContaoDataContainerAccessor;
+namespace Tastaturberuf\ContaoDataContainerAccessor\Config;
 
+use Closure;
 use Override;
-use Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigSql\ConfigSqlMethodInterface;
-use Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigSql\ConfigSqlPropertyInterface;
-
+use Tastaturberuf\ContaoDataContainerAccessor\AbstractAccessor;
 use function array_replace;
 
 /**
  * @see https://docs.contao.org/dev/reference/dca/config/#sql-configuration
  */
-final class ConfigSql extends DynamicProperties implements ConfigSqlPropertyInterface, ConfigSqlMethodInterface
+final class Sql extends AbstractAccessor
 {
-    private readonly string $_table;
+    public readonly string $_table;
+    public readonly array $_path;
 
     /**
      * Allows you to define the storage engine for this table different to the default.
      */
     public ?string $engine {
-        get => $this->_getNullableString('engine');
+        get => $this->getNullableString('engine');
         set {
             $this->__set('engine', $value);
         }
     }
 
-    #[Override]
     public function engine(?string $engine = null): self
     {
         $this->engine = $engine;
@@ -39,7 +38,7 @@ final class ConfigSql extends DynamicProperties implements ConfigSqlPropertyInte
      * Allows you to define the character set for this table different to the default.
      */
     public ?string $charset {
-        get => $this->_getNullableString('charset');
+        get => $this->getNullableString('charset');
         set {
             $this->__set('charset', $value);
         }
@@ -48,7 +47,6 @@ final class ConfigSql extends DynamicProperties implements ConfigSqlPropertyInte
     /**
      * Allows you to define the character set for this table different to the default.
      */
-    #[Override]
     public function charset(?string $charset = null): self
     {
         $this->charset = $charset;
@@ -63,7 +61,7 @@ final class ConfigSql extends DynamicProperties implements ConfigSqlPropertyInte
      *
      */
     public ?array $keys {
-        get => $this->_getNullableArray('keys');
+        get => $this->getNullableArray('keys');
         set {
             $this->__set('keys', $value);
         }
@@ -75,7 +73,6 @@ final class ConfigSql extends DynamicProperties implements ConfigSqlPropertyInte
      *
      * @param null|array<array-key, mixed> $keys
      */
-    #[Override]
     public function keys(?array $keys = null): self
     {
         $this->keys = array_replace($this->keys ?? [], $keys ?? []);
@@ -86,6 +83,21 @@ final class ConfigSql extends DynamicProperties implements ConfigSqlPropertyInte
     public function __construct(string $table)
     {
         $this->_table = $table;
+        $this->_path = ['TL_DCA', $table, 'config', 'sql'];
+    }
+
+    public static function create(string $table): self
+    {
+        return new self($table);
+    }
+
+    /**
+     * @param Closure(Sql $sql, string $table): void $callback
+     */
+    #[Override]
+    public function __invoke(Closure $callback): void
+    {
+        $callback($this, $this->_table);
     }
 
     #[Override]
@@ -112,11 +124,5 @@ final class ConfigSql extends DynamicProperties implements ConfigSqlPropertyInte
     public function __unset(string $name): void
     {
         unset($GLOBALS['TL_DCA'][$this->_table]['config']['sql'][$name]);
-    }
-
-    #[Override]
-    protected function _path(string $name): string
-    {
-        return "\$GLOBALS['TL_DCA']['$this->_table']['config']['sql']['$name']";
     }
 }

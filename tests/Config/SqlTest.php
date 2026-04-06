@@ -2,20 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Tastaturberuf\ContaoDataContainerAccessor\Tests;
+namespace Tastaturberuf\ContaoDataContainerAccessor\Tests\Config;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
-use Tastaturberuf\ContaoDataContainerAccessor\ConfigSql;
+use Tastaturberuf\ContaoDataContainerAccessor\Config\Sql;
+use Tastaturberuf\ContaoDataContainerAccessor\Tests\TestCase;
 use TypeError;
 
-final class ConfigSqlTest extends TestCase
+final class SqlTest extends TestCase
 {
     /** @mago-expect analysis:mixed-array-assignment */
     public function testWrongTypeInGlobalArray(): void
     {
         $GLOBALS['TL_DCA']['tl_test']['config']['sql']['engine'] = new StdClass();
 
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
 
         $this->expectException(TypeError::class);
 
@@ -25,24 +27,42 @@ final class ConfigSqlTest extends TestCase
 
     public function testCanInstantiateClass(): void
     {
-        $sql = new ConfigSql('tl_test');
-        static::assertInstanceOf(ConfigSql::class, $sql);
+        $sql = new Sql('tl_test');
+
+        static::assertSame('tl_test', $sql->_table);
     }
 
-    public function testEnginePropertyHookSetsAndReadsFromGlobals(): void
+    public function testCreateMethod(): void
     {
-        $sql = new ConfigSql('tl_test');
-        $sql->engine = 'InnoDB';
+        $sql = Sql::create('tl_test');
 
-        static::assertSame('InnoDB', $sql->engine);
-        static::assertSame('InnoDB', $GLOBALS['TL_DCA']['tl_test']['config']['sql']['engine']);
-        static::assertTrue($sql->__isset('engine'));
-        static::assertTrue(isset($sql->engine));
+        static::assertInstanceOf(Sql::class, $sql);
+    }
+
+    public function testInvokeMethod(): void
+    {
+        $sql = new Sql('tl_test');
+
+        $sql(static function (Sql $innerSql, string $table) use ($sql): void {
+            static::assertSame($sql, $innerSql);
+            static::assertSame('tl_test', $table);
+        });
+    }
+
+    #[DataProvider('dataProviderNull')]
+    #[DataProvider('dataProviderString')]
+    public function testEngineProperty(?string $value): void
+    {
+        $sql = new Sql('tl_test');
+        $sql->engine = $value;
+
+        static::assertSame($value, $sql->engine);
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['sql']['engine']);
     }
 
     public function testEngineMethodIsChainableAndSetsGlobals(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
         $returned = $sql->engine('MyISAM');
 
         static::assertSame($sql, $returned);
@@ -52,7 +72,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testEngineAllowsNullAndUnsetsIsset(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
         $sql->engine = null;
 
         static::assertNull($sql->engine);
@@ -64,7 +84,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testEngineInvalidTypeThrowsTypeError(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
 
         $this->expectException(TypeError::class);
         // property hook enforces ?string, so assigning an int should fail
@@ -74,7 +94,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testCharsetPropertyHookSetsAndReadsFromGlobals(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
         $sql->charset = 'utf8mb4';
 
         static::assertSame('utf8mb4', $sql->charset);
@@ -85,7 +105,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testCharsetMethodIsChainableAndSetsGlobals(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
         $returned = $sql->charset('latin1');
 
         static::assertSame($sql, $returned);
@@ -95,7 +115,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testCharsetAllowsNullAndUnsetsIsset(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
         $sql->charset = null;
 
         static::assertNull($sql->charset);
@@ -107,7 +127,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testCharsetInvalidTypeThrowsTypeError(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
 
         $this->expectException(TypeError::class);
         $invalid = self::mixed(42.0);
@@ -116,7 +136,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testKeysDefaultIsNullAndNotSetInGlobals(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
 
         static::assertNull($sql->keys);
         static::assertNull($GLOBALS['TL_DCA']['tl_test']['config']['sql']['keys'] ?? null);
@@ -126,7 +146,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testKeysPropertyHookSetsArrayAndIsset(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
         $keys = [
             'PRIMARY' => 'id',
             'idx_name' => 'name',
@@ -141,7 +161,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testKeysSetArrayOffsetsThrowsError(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
 
         $this->expectException(\Error::class);
         /** @phpstan-ignore-next-line */
@@ -150,7 +170,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testKeysArrayOffsetsAreAccessible(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
         $keys = [
             'PRIMARY' => 'id',
             'idx_name' => 'name',
@@ -166,7 +186,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testKeysMethodIsChainableAndSetsGlobals(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
         $keys = ['PRIMARY' => 'id'];
         $returned = $sql->keys($keys);
 
@@ -177,7 +197,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testKeysInvalidTypeThrowsTypeError(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
 
         $this->expectException(TypeError::class);
         $sql->keys = self::mixed('not-an-array');
@@ -185,7 +205,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testMagicGetSetIssetAndUnsetWorkAndAffectGlobals(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
 
         $sql->__set('custom', 'value');
         static::assertTrue($sql->__isset('custom'));
@@ -200,7 +220,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testDynamicPropertyAccessUsesMagicAndAffectsGlobals(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
 
         $sql->comment = 'table comment';
         static::assertSame('table comment', $sql->comment);
@@ -213,7 +233,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testPropertyHooksUnsetThrowsError(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
 
         $sql->charset = 'utf8mb4';
         static::assertSame('utf8mb4', $sql->charset);
@@ -225,7 +245,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testUnsetFromBaseClass(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
 
         $sql->engine = 'InnoDB';
 
@@ -240,7 +260,7 @@ final class ConfigSqlTest extends TestCase
 
     public function testFluentSetAndUnsetFromBaseClass(): void
     {
-        $sql = new ConfigSql('tl_test');
+        $sql = new Sql('tl_test');
         $returned = $sql->set('foo', 'bar')->set('bar', 'baz');
 
         static::assertSame($sql, $returned);
