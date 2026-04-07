@@ -533,10 +533,13 @@ final class Config extends AbstractAccessor implements ConfigInterface
 
     public Sql $sql {
         get => $this->sql ?? new Sql($this->_table);
-        set(null|array|Sql $value) {
+        set(null|array|Sql|Closure $value) {
             if ($value instanceof Sql) {
                 $this->sql = $value;
                 return;
+            }
+            if($value instanceof Closure) {
+                $this->sql->__invoke($value);
             }
 
             $this->__set('sql', $value);
@@ -549,7 +552,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
     public function sql(null|array|callable $callback): self
     {
         if (is_callable($callback)) {
-            $callback($this->sql, $this->_table);
+            $this->sql->__invoke($callback);
         } else {
             $this->__set('sql', $callback);
         }

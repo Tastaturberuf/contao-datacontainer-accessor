@@ -30,7 +30,7 @@ abstract class AbstractAccessor
 
     abstract public function __unset(string $name): void;
 
-    abstract public function __invoke(Closure $callable): void;
+    abstract public function __invoke(Closure $callback): void;
 
     /**
      * @throws TypeError

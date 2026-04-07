@@ -535,6 +535,51 @@ $config->backendSearchIgnore(); // true
 $config->backendSearchIgnore(false);
 ```
 
+### sql
+
+You can use the property, the method or the Standalone variant for defining the SQL.
+
+#### Property `null|array|Closure $sql = null`
+
+```php
+$config->sql = [
+    'keys' => [
+        'id' => 'primary'
+    ]
+];
+
+$config->sql = function($sql) {
+    $sql->keys->id = 'primary'
+}
+
+$config->sql->keys->id = 'primary';
+```
+
+#### Method `sql(null|array|Closure $callback): Config`
+
+```php
+$config->sql([
+    'keys' => [
+        'id' => 'primary'
+    ]    
+]);
+
+$config->sql(function($sql) {
+    $sql->keys->id = 'primary';
+});
+```
+
+#### Standalone `Sql::create(string $table): Sql`
+
+```php
+Sql::create('tl_example')->keys->id = 'primary';
+
+Sql::create('tl_example')
+    ->keys = [
+        'id' => 'primary'
+    ];   
+```
+
 ## Examples
 
 ### Default PHP array syntax
