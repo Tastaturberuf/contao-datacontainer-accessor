@@ -69,8 +69,11 @@ final class Sql extends AbstractAccessor
                 $this->keys = $value;
                 return;
             }
+
+            $this->keys ??= new Keys($this->_table);
+
             if ($value instanceof Closure) {
-                $value(new Keys($this->_table));
+                $this->keys->__invoke($value);
                 return;
             }
 

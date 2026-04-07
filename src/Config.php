@@ -538,7 +538,10 @@ final class Config extends AbstractAccessor implements ConfigInterface
                 $this->sql = $value;
                 return;
             }
-            if($value instanceof Closure) {
+
+            $this->sql ??= new Sql($this->_table);
+
+            if ($value instanceof Closure) {
                 $this->sql->__invoke($value);
             }
 

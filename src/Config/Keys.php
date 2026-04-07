@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor\Config;
 
+use Closure;
+
 /**
  * @mago-expect lint:no-global
  */
@@ -22,6 +24,11 @@ final readonly class Keys
     public static function create(string $table): self
     {
         return new self($table);
+    }
+
+    public function __invoke(Closure $callback): void
+    {
+        $callback($this, $this->_table);
     }
 
     /**
