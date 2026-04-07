@@ -11,6 +11,8 @@ use function array_replace;
 
 /**
  * @see https://docs.contao.org/dev/reference/dca/config/#sql-configuration
+ * @mago-ignore analysis:incompatible-property-access
+ * @mago-ignore analysis:incompatible-readonly-modifier
  */
 final class Sql extends AbstractAccessor
 {
@@ -56,13 +58,22 @@ final class Sql extends AbstractAccessor
 
     /**
      * Allows you to define primary keys and indexes for your fields.
+     *
      * @see https://docs.contao.org/dev/reference/dca/config/#sql-keys-and-indexes
-     * @todo find a nice way to add and remove keys e.g. by using a method like `add()`, `has()` and `remove()`. Maybe with ArrayOffsets.
      *
      */
-    public ?array $keys {
-        get => $this->getNullableArray('keys');
-        set {
+    public Keys $keys {
+        get => $this->keys ??= new Keys($this->_table);
+        set(null|array|Keys|Closure $value) {
+            if ($value instanceof Keys) {
+                $this->keys = $value;
+                return;
+            }
+            if ($value instanceof Closure) {
+                $value(new Keys($this->_table));
+                return;
+            }
+
             $this->__set('keys', $value);
         }
     }
