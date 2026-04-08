@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor\Tests\Config;
 
+use Closure;
 use Error;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
+use Tastaturberuf\ContaoDataContainerAccessor\Callback\ConfigCallback;
 use Tastaturberuf\ContaoDataContainerAccessor\CallbackBag;
 use Tastaturberuf\ContaoDataContainerAccessor\Config;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\ConfigCallbacks;
@@ -809,5 +811,188 @@ final class ConfigTest extends TestCase
         });
 
         static::assertSame('utf8mb4', $GLOBALS['TL_DCA']['tl_test']['config']['sql']['charset']);
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testLoadCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->loadCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Load->value][0]);
+        static::assertSame($config->loadCallback, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Load->value]);
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testCreateCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->createCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Create->value][0]);
+        static::assertSame(
+            $config->createCallback,
+            $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Create->value],
+        );
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testBeforeSubmitCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->beforeSubmitCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::BeforeSubmit->value][0]);
+        static::assertSame(
+            $config->beforeSubmitCallback,
+            $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::BeforeSubmit->value],
+        );
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testSubmitCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->submitCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Submit->value][0]);
+        static::assertSame(
+            $config->submitCallback,
+            $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Submit->value],
+        );
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testDeleteCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->deleteCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Delete->value][0]);
+        static::assertSame(
+            $config->deleteCallback,
+            $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Delete->value],
+        );
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testCutCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->cutCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Cut->value][0]);
+        static::assertSame($config->cutCallback, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Cut->value]);
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testCopyCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->copyCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Copy->value][0]);
+        static::assertSame($config->copyCallback, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Copy->value]);
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testCreateVersionCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->createVersionCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::CreateVersion->value][0]);
+        static::assertSame(
+            $config->createVersionCallback,
+            $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::CreateVersion->value],
+        );
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testRestoreVersionCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->restoreVersionCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::RestoreVersion->value][0]);
+        static::assertSame(
+            $config->restoreVersionCallback,
+            $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::RestoreVersion->value],
+        );
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testUndoCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->undoCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Undo->value][0]);
+        static::assertSame($config->undoCallback, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Undo->value]);
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testInvalidateCacheTagsCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->invalidateCacheTagsCallback = $value;
+
+        static::assertSame(
+            $value,
+            $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::InvalidateCacheTags->value][0],
+        );
+        static::assertSame(
+            $config->invalidateCacheTagsCallback,
+            $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::InvalidateCacheTags->value],
+        );
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testShowCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->showCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Show->value][0]);
+        static::assertSame($config->showCallback, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Show->value]);
+    }
+
+    #[DataProvider('dataProviderArray')]
+    #[DataProvider('dataProviderClosure')]
+    public function testPaletteCallbackProperty(array|Closure $value): void
+    {
+        $config = new Config('tl_test');
+
+        $config->paletteCallback = $value;
+
+        static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Palette->value][0]);
+        static::assertSame(
+            $config->paletteCallback,
+            $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Palette->value],
+        );
     }
 }

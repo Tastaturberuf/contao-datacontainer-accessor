@@ -7,6 +7,7 @@ namespace Tastaturberuf\ContaoDataContainerAccessor;
 use Closure;
 use InvalidArgumentException;
 use Override;
+use Tastaturberuf\ContaoDataContainerAccessor\Callback\ConfigCallback;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\ConfigCallbacks;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\Sql;
 use Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigInterface;
@@ -563,6 +564,110 @@ final class Config extends AbstractAccessor implements ConfigInterface
         return $this;
     }
 
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $loadCallback {
+        get => $this->getNullableArray('onload_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['onload_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $createCallback {
+        get => $this->getNullableArray('oncreate_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['oncreate_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $beforeSubmitCallback {
+        get => $this->getNullableArray('onbeforesubmit_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['onbeforesubmit_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $submitCallback {
+        get => $this->getNullableArray('onsubmit_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['onsubmit_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $deleteCallback {
+        get => $this->getNullableArray('ondelete_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['ondelete_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $cutCallback {
+        get => $this->getNullableArray('oncut_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['oncut_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $copyCallback {
+        get => $this->getNullableArray('oncopy_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['oncopy_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $createVersionCallback {
+        get => $this->getNullableArray('onversion_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['onversion_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $restoreVersionCallback {
+        get => $this->getNullableArray('onrestore_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['onrestore_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $undoCallback {
+        get => $this->getNullableArray('onundo_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['onundo_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $invalidateCacheTagsCallback {
+        get => $this->getNullableArray('oninvalidatecache_tags_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['oninvalidatecache_tags_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $showCallback {
+        get => $this->getNullableArray('onshow_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['onshow_callback'][] = $value;
+        }
+    }
+
+    /** @mago-ignore analysis:mixed-array-assignment */
+    public array $paletteCallback {
+        get => $this->getNullableArray('onpalette_callback') ?? [];
+        set(array|Closure $value) {
+            $GLOBALS['TL_DCA'][$this->_table]['config']['onpalette_callback'][] = $value;
+        }
+    }
+
     public function __construct(string $table)
     {
         $this->_table = $table;
@@ -614,5 +719,15 @@ final class Config extends AbstractAccessor implements ConfigInterface
     public function __invoke(Closure $callback): void
     {
         $callback($this, $this->_table);
+    }
+
+    /** @mago-expect analysis:mixed-array-assignment */
+    public function addCallback(string|ConfigCallback $name, Closure $callback): void
+    {
+        if ($name instanceof ConfigCallback) {
+            $name = $name->value;
+        }
+
+        $GLOBALS['TL_DCA'][$this->_table]['config'][$name][] = $callback;
     }
 }

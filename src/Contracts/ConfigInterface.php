@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor\Contracts;
 
+use Closure;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\Sql;
 
 /**
@@ -29,7 +30,7 @@ interface ConfigInterface
     /**
      * Name of the related child tables `table.id = ctable.pid`.
      */
-    public ?array $ctable { get; set; }
+    public ?array $ctable { get; set(null|string|array $value); }
 
     /**
      * `\Contao\DC_Table` (database table), `\Contao\DC_File` (local configuration file) or `\Contao\DC_Folder` (file manager).
@@ -129,4 +130,30 @@ interface ConfigInterface
     public ?bool $backendSearchIgnore { get; set; }
 
     public Sql $sql { get; set; }
+
+    public array $loadCallback { get; set(array|Closure $callback); }
+
+    public array $createCallback { get; set(array|Closure $callback); }
+
+    public array $beforeSubmitCallback { get; set(array|Closure $callback); }
+
+    public array $submitCallback { get; set(array|Closure $callback); }
+
+    public array $deleteCallback { get; set(array|Closure $callback); }
+
+    public array $cutCallback { get; set(array|Closure $callback); }
+
+    public array $copyCallback { get; set(array|Closure $callback); }
+
+    public array $createVersionCallback { get; set(array|Closure $callback); }
+
+    public array $restoreVersionCallback { get; set(array|Closure $callback); }
+
+    public array $undoCallback { get; set(array|Closure $callback); }
+
+    public array $invalidateCacheTagsCallback { get; set(array|Closure $callback); }
+
+    public array $showCallback { get; set(array|Closure $callback); }
+
+    public array $paletteCallback { get; set(array|Closure $callback); }
 }

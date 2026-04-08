@@ -6,7 +6,6 @@ namespace Tastaturberuf\ContaoDataContainerAccessor\Tests;
 
 use Override;
 use PHPUnit\Framework\TestCase as PhpUnitTestCase;
-
 use const PHP_INT_MAX;
 
 /**
@@ -97,5 +96,10 @@ abstract class TestCase extends PhpUnitTestCase
                 }
             }],
         ];
+    }
+
+    public static function dataProviderClosure(): iterable
+    {
+        yield 'closure' => [static fn(): true => true];
     }
 }

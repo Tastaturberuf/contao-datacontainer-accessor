@@ -6,7 +6,6 @@ namespace Tastaturberuf\ContaoDataContainerAccessor\Callback;
 
 enum ConfigCallback: string
 {
-
     case Load = 'onload_callback';
     case Create = 'oncreate_callback';
     case BeforeSubmit = 'onbeforesubmit_callback';
@@ -20,6 +19,4 @@ enum ConfigCallback: string
     case InvalidateCacheTags = 'oninvalidatecache_tags_callback';
     case Show = 'onshow_callback';
     case Palette = 'onpalette_callback';
-
 }
-
