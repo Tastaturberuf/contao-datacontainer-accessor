@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tastaturberuf\ContaoDataContainerAccessor\Tests\Config;
 
 use Closure;
-use Error;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
@@ -15,6 +14,7 @@ use Tastaturberuf\ContaoDataContainerAccessor\Config;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\ConfigCallbacks;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\Sql;
 use Tastaturberuf\ContaoDataContainerAccessor\Tests\TestCase;
+use TypeError;
 use function Tastaturberuf\ContaoDataContainerAccessor\ref;
 
 /**
@@ -54,12 +54,8 @@ final class ConfigTest extends TestCase
     {
         $GLOBALS['TL_DCA']['tl_test']['config'] = new StdClass();
 
+        $this->expectException(TypeError::class);
         $config = new Config('tl_test');
-
-        $this->expectException(Error::class);
-        $config->label = 'test';
-
-        d($config->label);
     }
 
     public function testOneLineSetWithCreate(): void
