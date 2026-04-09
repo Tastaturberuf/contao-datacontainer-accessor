@@ -71,6 +71,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->label);
+
         $config->label = $value;
 
         static::assertSame($value, $config->label);
@@ -111,6 +113,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->ptable);
+
         $config->ptable = $value;
 
         static::assertSame($value, $config->ptable);
@@ -135,6 +139,8 @@ final class ConfigTest extends TestCase
     public function testDynamicPtableProperty(?bool $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertNull($config->dynamicPtable);
 
         $config->dynamicPtable = $value;
 
@@ -161,6 +167,8 @@ final class ConfigTest extends TestCase
     public function testCtableProperty(array $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertSame([], $config->ctable);
 
         $config->ctable = $value;
 
@@ -234,6 +242,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->dataContainer);
+
         if ($value === null) {
             $this->expectException(InvalidArgumentException::class);
         }
@@ -262,6 +272,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->markAsCopy);
+
         $config->markAsCopy = $value;
 
         static::assertSame($value, $config->markAsCopy);
@@ -287,6 +299,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->uploadPath);
+
         $config->uploadPath = $value;
 
         static::assertSame($value, $config->uploadPath);
@@ -311,6 +325,8 @@ final class ConfigTest extends TestCase
     public function testValidFileTypesProperty(?string $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertNull($config->validFileTypes);
 
         $config->validFileTypes = $value;
 
@@ -347,6 +363,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->editableFileTypes);
+
         $config->editableFileTypes = $value;
 
         static::assertSame($value, $config->editableFileTypes);
@@ -372,6 +390,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->databaseAssisted);
+
         $config->databaseAssisted = $value;
 
         static::assertSame($value, $config->databaseAssisted);
@@ -395,6 +415,8 @@ final class ConfigTest extends TestCase
     public function testClosedProperty(?bool $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertNull($config->closed);
 
         $config->closed = $value;
 
@@ -420,6 +442,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->notEditable);
+
         $config->notEditable = $value;
 
         static::assertSame($value, $config->notEditable);
@@ -443,6 +467,8 @@ final class ConfigTest extends TestCase
     public function testNotDeletableProperty(?bool $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertNull($config->notDeletable);
 
         $config->notDeletable = $value;
 
@@ -468,6 +494,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->notSortable);
+
         $config->notSortable = $value;
 
         static::assertSame($value, $config->notSortable);
@@ -490,6 +518,8 @@ final class ConfigTest extends TestCase
     public function testNotCopyableProperty(bool $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertNull($config->notCopyable);
 
         $config->notCopyable = $value;
 
@@ -514,6 +544,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->notCreatable);
+
         $config->notCreatable = $value;
 
         static::assertSame($value, $config->notCreatable);
@@ -537,6 +569,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->switchToEdit);
+
         $config->switchToEdit = $value;
 
         static::assertSame($value, $config->switchToEdit);
@@ -559,6 +593,8 @@ final class ConfigTest extends TestCase
     public function testEnableVersioningProperty(bool $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertNull($config->enableVersioning);
 
         $config->enableVersioning = $value;
 
@@ -584,6 +620,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->hideVersionMenu);
+
         $config->hideVersionMenu = $value;
 
         static::assertSame($value, $config->hideVersionMenu);
@@ -605,6 +643,8 @@ final class ConfigTest extends TestCase
     public function testDoNotCopyRecordsProperty(bool $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertNull($config->doNotCopyRecords);
 
         $config->doNotCopyRecords = $value;
 
@@ -628,6 +668,8 @@ final class ConfigTest extends TestCase
     public function testDoNotDeleteRecordsProperty(bool $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertNull($config->doNotDeleteRecords);
 
         $config->doNotDeleteRecords = $value;
 
@@ -653,6 +695,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertNull($config->backlink);
+
         $config->backlink = $value;
 
         static::assertSame($value, $config->backlink);
@@ -677,6 +721,8 @@ final class ConfigTest extends TestCase
     public function testBackendSearchIgnoreProperty(?bool $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertNull($config->backendSearchIgnore);
 
         $config->backendSearchIgnore = $value;
 
@@ -710,6 +756,8 @@ final class ConfigTest extends TestCase
 
         // make sure this is only a dynamic property
         static::assertObjectNotHasProperty('dynamicProperty', $config);
+
+        static::assertNull($config->dynamicProperty);
 
         /** @mago-expect analysis:non-documented-property */
         $config->dynamicProperty = $value;
@@ -780,6 +828,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertInstanceOf(Sql::class, $config->sql);
+
         $config->sql = $value;
 
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config']['sql']);
@@ -815,6 +865,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertSame([], $config->loadCallback);
+
         $config->loadCallback = $value;
 
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Load->value][0]);
@@ -826,6 +878,8 @@ final class ConfigTest extends TestCase
     public function testCreateCallbackProperty(array|Closure $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertSame([], $config->createCallback);
 
         $config->createCallback = $value;
 
@@ -842,6 +896,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertSame([], $config->beforeSubmitCallback);
+
         $config->beforeSubmitCallback = $value;
 
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::BeforeSubmit->value][0]);
@@ -856,6 +912,8 @@ final class ConfigTest extends TestCase
     public function testSubmitCallbackProperty(array|Closure $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertSame([], $config->submitCallback);
 
         $config->submitCallback = $value;
 
@@ -872,6 +930,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertSame([], $config->deleteCallback);
+
         $config->deleteCallback = $value;
 
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Delete->value][0]);
@@ -887,6 +947,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertSame([], $config->cutCallback);
+
         $config->cutCallback = $value;
 
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Cut->value][0]);
@@ -899,6 +961,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertSame([], $config->copyCallback);
+
         $config->copyCallback = $value;
 
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Copy->value][0]);
@@ -910,6 +974,8 @@ final class ConfigTest extends TestCase
     public function testCreateVersionCallbackProperty(array|Closure $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertSame([], $config->createVersionCallback);
 
         $config->createVersionCallback = $value;
 
@@ -926,6 +992,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertSame([], $config->restoreVersionCallback);
+
         $config->restoreVersionCallback = $value;
 
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::RestoreVersion->value][0]);
@@ -941,6 +1009,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertSame([], $config->undoCallback);
+
         $config->undoCallback = $value;
 
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Undo->value][0]);
@@ -952,6 +1022,8 @@ final class ConfigTest extends TestCase
     public function testInvalidateCacheTagsCallbackProperty(array|Closure $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertSame([], $config->invalidateCacheTagsCallback);
 
         $config->invalidateCacheTagsCallback = $value;
 
@@ -971,6 +1043,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertSame([], $config->showCallback);
+
         $config->showCallback = $value;
 
         static::assertSame($value, $GLOBALS['TL_DCA']['tl_test']['config'][ConfigCallback::Show->value][0]);
@@ -982,6 +1056,8 @@ final class ConfigTest extends TestCase
     public function testPaletteCallbackProperty(array|Closure $value): void
     {
         $config = new Config('tl_test');
+
+        static::assertSame([], $config->paletteCallback);
 
         $config->paletteCallback = $value;
 
