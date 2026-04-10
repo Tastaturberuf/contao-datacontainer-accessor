@@ -59,6 +59,10 @@ final class SqlTest extends TestCase
     public function testEngineProperty(?string $value): void
     {
         $sql = new Sql('tl_test');
+
+        static::assertNull($sql->engine);
+        static::assertArrayNotHasKey('engine', $GLOBALS['TL_DCA']['tl_test']['config']['sql']);
+
         $sql->engine = $value;
 
         static::assertSame($value, $sql->engine);
@@ -70,6 +74,7 @@ final class SqlTest extends TestCase
     public function testEngineMethod(?string $value): void
     {
         $sql = new Sql('tl_test');
+
         $returned = $sql->engine($value);
 
         static::assertSame($sql, $returned);
@@ -82,6 +87,10 @@ final class SqlTest extends TestCase
     public function testCharsetProperty(?string $value): void
     {
         $sql = new Sql('tl_test');
+
+        static::assertNull($sql->charset);
+        static::assertArrayNotHasKey('charset', $GLOBALS['TL_DCA']['tl_test']['config']['sql']);
+
         $sql->charset = $value;
 
         static::assertSame($value, $sql->charset);
@@ -93,6 +102,7 @@ final class SqlTest extends TestCase
     public function testCharsetMethod(?string $value): void
     {
         $sql = new Sql('tl_test');
+
         $returned = $sql->charset($value);
 
         static::assertSame($sql, $returned);

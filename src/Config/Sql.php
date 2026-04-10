@@ -7,17 +7,19 @@ namespace Tastaturberuf\ContaoDataContainerAccessor\Config;
 use Closure;
 use Override;
 use Tastaturberuf\ContaoDataContainerAccessor\AbstractAccessor;
+use Tastaturberuf\ContaoDataContainerAccessor\Contracts\Config\SqlInterface;
 use function array_replace;
 
 /**
  * @see https://docs.contao.org/dev/reference/dca/config/#sql-configuration
- * @mago-ignore analysis:incompatible-property-access
- * @mago-ignore analysis:incompatible-readonly-modifier
+ * @mago-expect analysis:incompatible-property-access
+ * @mago-expect analysis:incompatible-readonly-modifier
  */
-final class Sql extends AbstractAccessor
+final class Sql extends AbstractAccessor implements SqlInterface
 {
     public readonly string $_table;
     public readonly array $_path;
+    protected array $_ref;
 
     /**
      * Allows you to define the storage engine for this table different to the default.
@@ -25,7 +27,7 @@ final class Sql extends AbstractAccessor
     public ?string $engine {
         get => $this->getNullableString('engine');
         set {
-            $this->__set('engine', $value);
+            $this->_ref['engine'] = $value;
         }
     }
 
@@ -42,7 +44,7 @@ final class Sql extends AbstractAccessor
     public ?string $charset {
         get => $this->getNullableString('charset');
         set {
-            $this->__set('charset', $value);
+            $this->_ref['charset'] = $value;
         }
     }
 
@@ -77,13 +79,14 @@ final class Sql extends AbstractAccessor
                 return;
             }
 
-            $this->__set('keys', $value);
+            $this->_ref['keys'] = $value;
         }
     }
 
     /**
      * Allows you to define primary keys and indexes for your fields.
      * @see https://docs.contao.org/dev/reference/dca/config/#sql-keys-and-indexes
+     * @todo fix this
      *
      * @param null|array<array-key, mixed> $keys
      */
@@ -94,10 +97,18 @@ final class Sql extends AbstractAccessor
         return $this;
     }
 
+    /**
+     * @mago-expect analysis:mixed-array-assignment
+     * @mago-expect analysis:mixed-property-type-coercion
+     * @mago-expect lint:no-global
+     */
     public function __construct(string $table)
     {
+        $GLOBALS['TL_DCA'][$table]['config']['sql'] ??= [];
+
         $this->_table = $table;
         $this->_path = ['TL_DCA', $table, 'config', 'sql'];
+        $this->_ref = &$GLOBALS['TL_DCA'][$table]['config']['sql'];
     }
 
     public static function create(string $table): self
@@ -112,31 +123,5 @@ final class Sql extends AbstractAccessor
     public function __invoke(Closure $callback): void
     {
         $callback($this, $this->_table);
-    }
-
-    #[Override]
-    public function __get(string $name): mixed
-    {
-        return $GLOBALS['TL_DCA'][$this->_table]['config']['sql'][$name] ?? null;
-    }
-
-    /** @mago-expect analysis:mixed-array-assignment */
-    #[Override]
-    public function __set(string $name, mixed $value): void
-    {
-        $GLOBALS['TL_DCA'][$this->_table]['config']['sql'][$name] = $value;
-    }
-
-    #[Override]
-    public function __isset(string $name): bool
-    {
-        return isset($GLOBALS['TL_DCA'][$this->_table]['config']['sql'][$name]);
-    }
-
-    /** @mago-expect analysis:mixed-array-access */
-    #[Override]
-    public function __unset(string $name): void
-    {
-        unset($GLOBALS['TL_DCA'][$this->_table]['config']['sql'][$name]);
     }
 }
