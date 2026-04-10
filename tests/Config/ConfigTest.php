@@ -19,6 +19,8 @@ use function Tastaturberuf\ContaoDataContainerAccessor\ref;
 
 /**
  * @mago-expect analysis:mixed-array-access
+ * @mago-expect analysis:mixed-array-assignment
+ * @mago-expect analysis:mixed-argument
  * @mago-expect lint:no-global
  */
 final class ConfigTest extends TestCase
@@ -47,9 +49,6 @@ final class ConfigTest extends TestCase
         });
     }
 
-    /**
-     * @mago-expect analysis:mixed-array-assignment
-     */
     public function testInvalidSetterMethod(): void
     {
         $GLOBALS['TL_DCA']['tl_test']['config'] = new StdClass();
@@ -71,7 +70,10 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        // test default value
         static::assertNull($config->label);
+        // test the key was not initialized
+        static::assertArrayNotHasKey('label', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->label = $value;
 
@@ -90,6 +92,7 @@ final class ConfigTest extends TestCase
 
         $GLOBALS['TL_LANG']['tl_test']['config']['label'] = 'changed';
 
+        /** @mago-expect analysis:impossible-type-comparison */
         static::assertSame('changed', $GLOBALS['TL_DCA']['tl_test']['config']['label']);
         static::assertSame('changed', $config->label);
     }
@@ -114,6 +117,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->ptable);
+        static::assertArrayNotHasKey('ptable', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->ptable = $value;
 
@@ -141,6 +145,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->dynamicPtable);
+        static::assertArrayNotHasKey('dynamicPtable', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->dynamicPtable = $value;
 
@@ -169,6 +174,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->ctable);
+        static::assertArrayNotHasKey('ctable', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->ctable = $value;
 
@@ -243,6 +249,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->dataContainer);
+        static::assertArrayNotHasKey('dataContainer', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         if ($value === null) {
             $this->expectException(InvalidArgumentException::class);
@@ -273,6 +280,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->markAsCopy);
+        static::assertArrayNotHasKey('markAsCopy', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->markAsCopy = $value;
 
@@ -300,6 +308,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->uploadPath);
+        static::assertArrayNotHasKey('uploadPath', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->uploadPath = $value;
 
@@ -327,6 +336,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->validFileTypes);
+        static::assertArrayNotHasKey('validFileTypes', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->validFileTypes = $value;
 
@@ -364,6 +374,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->editableFileTypes);
+        static::assertArrayNotHasKey('editableFileTypes', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->editableFileTypes = $value;
 
@@ -391,6 +402,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->databaseAssisted);
+        static::assertArrayNotHasKey('databaseAssisted', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->databaseAssisted = $value;
 
@@ -417,6 +429,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->closed);
+        static::assertArrayNotHasKey('closed', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->closed = $value;
 
@@ -443,6 +456,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->notEditable);
+        static::assertArrayNotHasKey('notEditable', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->notEditable = $value;
 
@@ -469,6 +483,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->notDeletable);
+        static::assertArrayNotHasKey('notDeletable', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->notDeletable = $value;
 
@@ -495,6 +510,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->notSortable);
+        static::assertArrayNotHasKey('notSortable', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->notSortable = $value;
 
@@ -520,6 +536,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->notCopyable);
+        static::assertArrayNotHasKey('notCopyable', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->notCopyable = $value;
 
@@ -545,6 +562,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->notCreatable);
+        static::assertArrayNotHasKey('notCreatable', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->notCreatable = $value;
 
@@ -570,6 +588,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->switchToEdit);
+        static::assertArrayNotHasKey('switchToEdit', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->switchToEdit = $value;
 
@@ -595,6 +614,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->enableVersioning);
+        static::assertArrayNotHasKey('enableVersioning', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->enableVersioning = $value;
 
@@ -621,6 +641,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->hideVersionMenu);
+        static::assertArrayNotHasKey('hideVersionMenu', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->hideVersionMenu = $value;
 
@@ -645,6 +666,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->doNotCopyRecords);
+        static::assertArrayNotHasKey('doNotCopyRecords', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->doNotCopyRecords = $value;
 
@@ -670,6 +692,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->doNotDeleteRecords);
+        static::assertArrayNotHasKey('doNotDeleteRecords', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->doNotDeleteRecords = $value;
 
@@ -696,6 +719,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->backlink);
+        static::assertArrayNotHasKey('backlink', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->backlink = $value;
 
@@ -723,6 +747,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertNull($config->backendSearchIgnore);
+        static::assertArrayNotHasKey('backendSearchIgnore', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->backendSearchIgnore = $value;
 
@@ -758,6 +783,7 @@ final class ConfigTest extends TestCase
         static::assertObjectNotHasProperty('dynamicProperty', $config);
 
         static::assertNull($config->dynamicProperty);
+        static::assertArrayNotHasKey('dynamicProperty', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         /** @mago-expect analysis:non-documented-property */
         $config->dynamicProperty = $value;
@@ -829,6 +855,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertInstanceOf(Sql::class, $config->sql);
+        static::assertArrayNotHasKey('sql', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->sql = $value;
 
@@ -866,6 +893,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->loadCallback);
+        static::assertArrayNotHasKey(ConfigCallback::Load->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->loadCallback = $value;
 
@@ -880,6 +908,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->createCallback);
+        static::assertArrayNotHasKey(ConfigCallback::Create->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->createCallback = $value;
 
@@ -897,6 +926,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->beforeSubmitCallback);
+        static::assertArrayNotHasKey(ConfigCallback::BeforeSubmit->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->beforeSubmitCallback = $value;
 
@@ -914,6 +944,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->submitCallback);
+        static::assertArrayNotHasKey(ConfigCallback::Submit->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->submitCallback = $value;
 
@@ -931,6 +962,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->deleteCallback);
+        static::assertArrayNotHasKey(ConfigCallback::Delete->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->deleteCallback = $value;
 
@@ -948,6 +980,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->cutCallback);
+        static::assertArrayNotHasKey(ConfigCallback::Cut->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->cutCallback = $value;
 
@@ -962,6 +995,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->copyCallback);
+        static::assertArrayNotHasKey(ConfigCallback::Copy->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->copyCallback = $value;
 
@@ -976,6 +1010,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->createVersionCallback);
+        static::assertArrayNotHasKey(ConfigCallback::CreateVersion->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->createVersionCallback = $value;
 
@@ -993,6 +1028,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->restoreVersionCallback);
+        static::assertArrayNotHasKey(ConfigCallback::RestoreVersion->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->restoreVersionCallback = $value;
 
@@ -1010,6 +1046,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->undoCallback);
+        static::assertArrayNotHasKey(ConfigCallback::Undo->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->undoCallback = $value;
 
@@ -1024,6 +1061,10 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->invalidateCacheTagsCallback);
+        static::assertArrayNotHasKey(
+            ConfigCallback::InvalidateCacheTags->value,
+            $GLOBALS['TL_DCA']['tl_test']['config'],
+        );
 
         $config->invalidateCacheTagsCallback = $value;
 
@@ -1044,6 +1085,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->showCallback);
+        static::assertArrayNotHasKey(ConfigCallback::Show->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->showCallback = $value;
 
@@ -1058,6 +1100,7 @@ final class ConfigTest extends TestCase
         $config = new Config('tl_test');
 
         static::assertSame([], $config->paletteCallback);
+        static::assertArrayNotHasKey(ConfigCallback::Palette->value, $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->paletteCallback = $value;
 

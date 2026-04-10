@@ -15,7 +15,7 @@ interface ConfigInterface
     /**
      * The label is used with page or file trees and typically includes reference to the language array.
      */
-    public ?string $label { get; set; }
+    public ?string $label { get; set(null|string|Closure $label); }
 
     /**
      * Name of the related parent table `table.pid = ptable.id`.
