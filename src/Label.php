@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor;
 
-
 use Closure;
 use Override;
 use Tastaturberuf\ContaoDataContainerAccessor\Callback\LabelCallback;
+use Tastaturberuf\ContaoDataContainerAccessor\Contracts\LabelInterface;
 
 /**
  * @see https://docs.contao.org/dev/reference/dca/list/#labels
  * @mago-expect analysis:incompatible-property-access
  * @mago-expect analysis:incompatible-readonly-modifier
  */
-final class Label extends AbstractAccessor
+final class Label extends AbstractAccessor implements LabelInterface
 {
     public readonly string $_table;
     public readonly array $_path;
