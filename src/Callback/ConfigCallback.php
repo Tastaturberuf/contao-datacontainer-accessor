@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor\Callback;
 
+use Closure;
+
 enum ConfigCallback: string
 {
     case Load = 'onload_callback';
@@ -19,4 +21,13 @@ enum ConfigCallback: string
     case InvalidateCacheTags = 'oninvalidatecache_tags_callback';
     case Show = 'onshow_callback';
     case Palette = 'onpalette_callback';
+
+    /**
+     * @mago-expect analysis:mixed-array-assignment
+     * @mago-expect lint:no-global
+     */
+    public function create(string $table, Closure $callback): void
+    {
+        $GLOBALS['TL_DCA'][$table]['config'][$this->value][] = $callback;
+    }
 }
