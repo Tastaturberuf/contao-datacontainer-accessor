@@ -4,30 +4,36 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor;
 
+
+use Closure;
+use Override;
 use Tastaturberuf\ContaoDataContainerAccessor\Callback\LabelCallback;
 
 /**
  * @see https://docs.contao.org/dev/reference/dca/list/#labels
+ * @mago-expect analysis:incompatible-property-access
+ * @mago-expect analysis:incompatible-readonly-modifier
  */
-final class Label extends DynamicPropertiesInterface
+final class Label extends AbstractAccessor
 {
-
-    private readonly string $_table;
+    public readonly string $_table;
+    public readonly array $_path;
+    protected array $_ref;
 
     /**
      * One or more fields that will be shown in the list (e.g. ['title', 'user_id:tl_user.name']).
      */
     public ?array $fields {
-        get => $this->__get('fields');
+        get => $this->getNullableArray('fields');
         set {
-            $this->__set('fields', $value);
+            $this->_ref['fields'] = $value;
         }
     }
 
     /**
      * One or more fields that will be shown in the list (e.g. ['title', 'user_id:tl_user.name']).
      */
-    public function fields(array $fields): self
+    public function fields(string ...$fields): self
     {
         $this->fields = $fields;
 
@@ -37,10 +43,10 @@ final class Label extends DynamicPropertiesInterface
     /**
      * If true, Contao will generate a table header with column names (e.g. back end member list)
      */
-    public bool $showColumns {
-        get => $this->__get('showColumns') ?? false;
+    public ?bool $showColumns {
+        get => $this->getNullableBool('showColumns');
         set {
-            $this->__set('showColumns', $value);
+            $this->_ref['showColumns'] = $value;
         }
     }
 
@@ -61,24 +67,19 @@ final class Label extends DynamicPropertiesInterface
     /**
      * If false, Contao will not force the first sorting field to show up in the list. (default: true)
      */
-    public bool $showFirstOrderBy {
-        get => $this->__get('showFirstOrderBy') ?? true;
-        set => $GLOBALS['TL_DCA'][$this->_table]['list']['labels']['showFirstOrderBy'] = $value;
+    public ?bool $showFirstOrderBy {
+        get => $this->getNullableBool('showFirstOrderBy');
+        set {
+            $this->_ref['showFirstOrderBy'] = $value;
+        }
     }
 
     /**
      * If false, Contao will not force the first sorting field to show up in the list. (default: true)
      */
-    public function showFirstOrderBy(bool $showFirstOrderBy = true): self
+    public function showFirstOrderBy(bool $enabled = true): self
     {
-        $this->showFirstOrderBy = $showFirstOrderBy;
-
-        return $this;
-    }
-
-    public function hideFirstOrderBy(): self
-    {
-        $this->showFirstOrderBy = false;
+        $this->showFirstOrderBy = $enabled;
 
         return $this;
     }
@@ -86,9 +87,11 @@ final class Label extends DynamicPropertiesInterface
     /**
      * HTML string used to format the fields that will be shown (e.g. `%s (%s)`).
      */
-    public string $format {
-        get => $GLOBALS['TL_DCA'][$this->_table]['list']['labels']['format'] ?? '';
-        set => $GLOBALS['TL_DCA'][$this->_table]['list']['labels']['format'] = $value;
+    public ?string $format {
+        get => $this->getNullableString('format');
+        set {
+            $this->_ref['format'] = $value;
+        }
     }
 
     public function format(string $format, ?array $fields = null, ?int $maxCharacters = null): self
@@ -110,71 +113,64 @@ final class Label extends DynamicPropertiesInterface
      * The maximum number of characters to show in the list. (default: null)
      */
     public ?int $maxCharacters {
-        get => $GLOBALS['TL_DCA'][$this->_table]['list']['labels']['maxCharacters'] ?? null;
-        set => $GLOBALS['TL_DCA'][$this->_table]['list']['labels']['maxCharacters'] = $value;
+        get => $this->getNullableInt('maxCharacters');
+        set {
+            $this->_ref['maxCharacters'] = $value;
+        }
     }
 
-    /**
-     * @param int $maxCharacters
-     * @return $this
-     */
-    public function maxCharacters(int $maxCharacters): self
+    public function maxCharacters(?int $maxCharacters): self
     {
         $this->maxCharacters = $maxCharacters;
 
         return $this;
     }
 
-    public null|\Closure|array $group_callback {
-        get => $GLOBALS['TL_DCA'][$this->_table]['list']['labels']['group_callback'] ?? null;
+    /** @mago-expect analysis:mixed-return-statement */
+    public null|array|Closure $groupCallback {
+        get => $this->__get('group_callback');
         set {
-            if (is_callable($value) || null === $value) {
-                $GLOBALS['TL_DCA'][$this->_table]['list']['labels']['group_callback'] = $value;
-            }
-
-            throw new \InvalidArgumentException('The group_callback must be a callable or null.');
+            $this->_ref['group_callback'] = $value;
         }
     }
 
-    public null|\Closure|array $label_callback {
-        get => $GLOBALS['TL_DCA'][$this->_table]['list']['labels']['label_callback'] ?? null;
+    /** @mago-expect analysis:mixed-return-statement */
+    public null|array|Closure $labelCallback {
+        get => $this->__get('label_callback');
         set {
-            if (is_callable($value) || null === $value) {
-                $GLOBALS['TL_DCA'][$this->_table]['list']['labels']['label_callback'] = $value;
-            }
-
-            throw new \InvalidArgumentException('The label_callback must be a callable or null.');
+            $this->_ref['label_callback'] = $value;
         }
     }
 
+    /**
+     * @mago-expect analysis:mixed-array-assignment
+     * @mago-expect analysis:mixed-property-type-coercion
+     * @mago-expect lint:no-global
+     */
     public function __construct(string $table)
     {
+        $GLOBALS['TL_DCA'][$this->_table]['list']['label'] ??= [];
         $this->_table = $table;
+        $this->_path = ['TL_DCA', $this->_table, 'list', 'label'];
+        $this->_ref = &$GLOBALS['TL_DCA'][$this->_table]['list']['label'];
     }
 
-    public function __get(string $name): mixed
+    public static function create(string $table): self
     {
-        return $GLOBALS['TL_DCA'][$this->_table]['list']['label'][$name] ?? null;
+        return new self($table);
     }
 
-    public function __set(string $name, mixed $value): void
+    /**
+     * @param Closure(Label $Label, string $table): void $callback
+     */
+    #[Override]
+    public function __invoke(Closure $callback): void
     {
-        $GLOBALS['TL_DCA'][$this->_table]['list']['label'][$name] = $value;
+        $callback($this, $this->_table);
     }
 
-    public function __isset(string $name): bool
+    public function addCallback(LabelCallback $name, Closure $callback): void
     {
-        return isset($GLOBALS['TL_DCA'][$this->_table]['list']['label'][$name]);
+        $this->_ref[$name->value] = $callback;
     }
-
-    public function __unset(string $name): void
-    {
-        unset($GLOBALS['TL_DCA'][$this->_table]['list']['label'][$name]);
-    }
-
-    public function addCallback(LabelCallback $name, callable $callback): void
-    {
-        $GLOBALS['TL_DCA'][$this->_table]['list']['label'][$name->value] = $callback;
-    }
-
 }
