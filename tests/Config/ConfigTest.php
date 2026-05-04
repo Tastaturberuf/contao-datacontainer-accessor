@@ -9,9 +9,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use Tastaturberuf\ContaoDataContainerAccessor\Callback\ConfigCallback;
-use Tastaturberuf\ContaoDataContainerAccessor\CallbackBag;
 use Tastaturberuf\ContaoDataContainerAccessor\Config;
-use Tastaturberuf\ContaoDataContainerAccessor\Config\ConfigCallbacks;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\Sql;
 use Tastaturberuf\ContaoDataContainerAccessor\Tests\TestCase;
 use TypeError;
@@ -166,14 +164,15 @@ final class ConfigTest extends TestCase
     }
 
     /**
-     * @param array<string> $value
+     * @param null|array<string> $value
      */
+    #[DataProvider('dataProviderNull')]
     #[DataProvider('dataProviderArray')]
-    public function testCtableProperty(array $value): void
+    public function testCtableProperty(?array $value): void
     {
         $config = new Config('tl_test');
 
-        static::assertSame([], $config->ctable);
+        static::assertNull($config->ctable);
         static::assertArrayNotHasKey('ctable', $GLOBALS['TL_DCA']['tl_test']['config']);
 
         $config->ctable = $value;
@@ -822,25 +821,6 @@ final class ConfigTest extends TestCase
         static::assertArrayNotHasKey('ptable', $GLOBALS['TL_DCA']['tl_test']['config']);
     }
 
-    public function testCallbacks(): void
-    {
-        $config = new Config('tl_test');
-
-        static::assertInstanceOf(ConfigCallbacks::class, $config->callbacks);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->create);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->beforeSubmit);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->copy);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->cut);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->delete);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->load);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->palette);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->restore);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->restoreVersion);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->submit);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->undo);
-        static::assertInstanceOf(CallbackBag::class, $config->callbacks->version);
-    }
-
     public function testGetSqlProperty(): void
     {
         $config = new Config('tl_test');
@@ -848,14 +828,14 @@ final class ConfigTest extends TestCase
         static::assertInstanceOf(Sql::class, $config->sql);
     }
 
-    #[DataProvider('dataProviderNull')]
     #[DataProvider('dataProviderArray')]
-    public function testSetSqlProperty(?array $value): void
+    public function testSetSqlProperty(array $value): void
     {
         $config = new Config('tl_test');
 
         static::assertInstanceOf(Sql::class, $config->sql);
-        static::assertArrayNotHasKey('sql', $GLOBALS['TL_DCA']['tl_test']['config']);
+        static::assertArrayHasKey('sql', $GLOBALS['TL_DCA']['tl_test']['config']);
+        static::assertEmpty($GLOBALS['TL_DCA']['tl_test']['config']['sql']);
 
         $config->sql = $value;
 

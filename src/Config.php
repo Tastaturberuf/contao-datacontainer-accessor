@@ -8,46 +8,43 @@ use Closure;
 use InvalidArgumentException;
 use Override;
 use Tastaturberuf\ContaoDataContainerAccessor\Callback\ConfigCallback;
-use Tastaturberuf\ContaoDataContainerAccessor\Config\ConfigCallbacks;
 use Tastaturberuf\ContaoDataContainerAccessor\Config\Sql;
 use Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigInterface;
+use function is_array;
 
 /**
  * @see https://docs.contao.org/dev/reference/dca/config/
  * @mago-expect analysis:incompatible-readonly-modifier
  * @mago-expect analysis:incompatible-property-access
- * @mago-expect lint:no-global
+ * @mago-expect analysis:mixed-return-statement
  */
 final class Config extends AbstractAccessor implements ConfigInterface
 {
     public readonly string $_table;
     public readonly array $_path;
+    protected array $_ref;
 
     /**
      * The label is used with page or file trees and typically includes reference to the language array.
-     *
-     * @mago-expect analysis:mixed-array-assignment
      */
     public ?string $label {
-        get => $this->getNullableString('label');
+        get => $this->_ref['label'] ?? null;
         set(null|string|Closure $value) {
             if ($value instanceof Closure) {
-                $GLOBALS['TL_DCA'][$this->_table]['config']['label'] = &$value();
+                $this->_ref['label'] = &$value();
                 return;
             }
 
-            $this->__set('label', $value);
+            $this->_ref['label'] = $value;
         }
     }
 
     /**
      * The label is used with page or file trees and typically includes reference to the language array.
-     *
-     * @mago-expect analysis:mixed-array-assignment
      */
     public function label(?string &$label = null): self
     {
-        $GLOBALS['TL_DCA'][$this->_table]['config']['label'] = &$label;
+        $this->_ref['label'] = &$label;
 
         return $this;
     }
@@ -55,10 +52,11 @@ final class Config extends AbstractAccessor implements ConfigInterface
     /**
      * Name of the related parent table `table.pid = ptable.id`.
      */
+
     public ?string $ptable {
-        get => $this->getNullableString('ptable');
+        get => $this->_ref['ptable'] ?? null;
         set {
-            $this->__set('ptable', $value);
+            $this->_ref['ptable'] = $value;
         }
     }
 
@@ -67,7 +65,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function ptable(?string $table = null): self
     {
-        $this->ptable = $table;
+        $this->_ref['ptable'] = $table;
 
         return $this;
     }
@@ -76,9 +74,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * Dynamically set the parent table like in `tl_content`.
      */
     public ?bool $dynamicPtable {
-        get => $this->getNullableBool('dynamicPtable');
+        get => $this->_ref['dynamicPtable'] ?? null;
         set {
-            $this->__set('dynamicPtable', $value);
+            $this->_ref['dynamicPtable'] = $value;
         }
     }
 
@@ -87,7 +85,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function dynamicPtable(bool $enabled = true): self
     {
-        $this->dynamicPtable = $enabled;
+        $this->_ref['dynamicPtable'] = $enabled;
 
         return $this;
     }
@@ -96,9 +94,14 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * Name of the related child tables `table.id = ctable.pid`.
      */
     public ?array $ctable {
-        get => $this->getNullableArray('ctable') ?? [];
-        set(null|string|array $value) {
-            $this->__set('ctable', is_array($value) ? $value : [$value]);
+        get => $this->_ref['ctable'] ?? null;
+        set(null|array|string $value) {
+            if (null === $value) {
+                $this->_ref['ctable'] = null;
+                return;
+            }
+
+            $this->_ref['ctable'] = is_array($value) ? $value : [$value];
         }
     }
 
@@ -110,11 +113,11 @@ final class Config extends AbstractAccessor implements ConfigInterface
     public function ctable(string|array $table = [], string ...$tables): self
     {
         if (is_string($table)) {
-            $this->ctable = [$table, ...$tables];
+            $this->_ref['ctable'] = [$table, ...$tables];
         }
 
         if (is_array($table)) {
-            $this->ctable = [...$table, ...$tables];
+            $this->_ref['ctable'] = [...$table, ...$tables];
         }
 
         return $this;
@@ -124,13 +127,13 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * `\Contao\DC_Table` (database table), `\Contao\DC_File` (local configuration file) or `\Contao\DC_Folder` (file manager).
      */
     public ?string $dataContainer {
-        get => $this->getNullableString('dataContainer');
+        get => $this->_ref['dataContainer'] ?? null;
         set {
             if (null === $value) {
                 throw new InvalidArgumentException('Do not set the data container to null');
             }
 
-            $this->__set('dataContainer', $value);
+            $this->_ref['dataContainer'] = $value;
         }
     }
 
@@ -139,7 +142,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function dataContainer(string $class = '\Contao\DC_Table'): self
     {
-        $this->dataContainer = $class;
+        $this->_ref['dataContainer'] = $class;
 
         return $this;
     }
@@ -148,9 +151,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * Appends “(copy)” to this field when copying a record.
      */
     public ?string $markAsCopy {
-        get => $this->getNullableString('markAsCopy');
+        get => $this->_ref['markAsCopy'] ?? null;
         set {
-            $this->__set('markAsCopy', $value);
+            $this->_ref['markAsCopy'] = $value;
         }
     }
 
@@ -159,7 +162,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function markAsCopy(?string $field = null): self
     {
-        $this->markAsCopy = $field;
+        $this->_ref['markAsCopy'] = $field;
 
         return $this;
     }
@@ -168,9 +171,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * Path to the root folder of the file manager.
      */
     public ?string $uploadPath {
-        get => $this->getNullableString('uploadPath');
+        get => $this->_ref['uploadPath'] ?? null;
         set {
-            $this->__set('uploadPath', $value);
+            $this->_ref['uploadPath'] = $value;
         }
     }
 
@@ -179,7 +182,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function uploadPath(?string $path = null): self
     {
-        $this->uploadPath = $path;
+        $this->_ref['uploadPath'] = $path;
 
         return $this;
     }
@@ -188,10 +191,10 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * Limits the file manager to certain file types (comma separated list).
      */
     public ?string $validFileTypes {
-        get => $this->getNullableString('validFileTypes');
+        get => $this->_ref['validFileTypes'] ?? null;
         set(null|string|array $value) {
             $value = is_array($value) ? implode(',', $value) : $value;
-            $this->__set('validFileTypes', $value);
+            $this->_ref['validFileTypes'] = $value;
         }
     }
 
@@ -207,7 +210,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
             $extensions = implode(',', $extensions);
         }
 
-        $this->validFileTypes = $extensions;
+        $this->_ref['validFileTypes'] = $extensions;
 
         return $this;
     }
@@ -216,10 +219,10 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * Limits the file types that can be edited with the source code editor (comma separated list).
      */
     public ?string $editableFileTypes {
-        get => $this->getNullableString('editableFileTypes');
+        get => $this->_ref['editableFileTypes'] ?? null;
         set(null|string|array $value) {
             $value = is_array($value) ? implode(',', $value) : $value;
-            $this->__set('editableFileTypes', $value);
+            $this->_ref['editableFileTypes'] = $value;
         }
     }
 
@@ -234,7 +237,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
             $extensions = implode(',', $extensions);
         }
 
-        $this->editableFileTypes = $extensions;
+        $this->_ref['editableFileTypes'] = $extensions;
 
         return $this;
     }
@@ -243,9 +246,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * If `true`, the file manager is synchronized with a database table.
      */
     public ?bool $databaseAssisted {
-        get => $this->getNullableBool('databaseAssisted');
+        get => $this->_ref['databaseAssisted'] ?? null;
         set {
-            $this->__set('databaseAssisted', $value);
+            $this->_ref['databaseAssisted'] = $value;
         }
     }
 
@@ -254,7 +257,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function databaseAssisted(bool $enabled = true): self
     {
-        $this->databaseAssisted = $enabled;
+        $this->_ref['databaseAssisted'] = $enabled;
 
         return $this;
     }
@@ -263,9 +266,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * If `true`, you cannot add further records to the table.
      */
     public ?bool $closed {
-        get => $this->getNullableBool('closed');
+        get => $this->_ref['closed'] ?? null;
         set {
-            $this->__set('closed', $value);
+            $this->_ref['closed'] = $value;
         }
     }
 
@@ -274,7 +277,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function closed(bool $enabled = true): self
     {
-        $this->closed = $enabled;
+        $this->_ref['closed'] = $enabled;
 
         return $this;
     }
@@ -283,9 +286,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * If `true`, the table cannot be edited.
      */
     public ?bool $notEditable {
-        get => $this->getNullableBool('notEditable');
+        get => $this->_ref['notEditable'] ?? null;
         set {
-            $this->__set('notEditable', $value);
+            $this->_ref['notEditable'] = $value;
         }
     }
 
@@ -294,7 +297,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function notEditable(bool $enabled = true): self
     {
-        $this->notEditable = $enabled;
+        $this->_ref['notEditable'] = $enabled;
 
         return $this;
     }
@@ -303,9 +306,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * If `true`, records in the table cannot be deleted.
      */
     public ?bool $notDeletable {
-        get => $this->getNullableBool('notDeletable');
+        get => $this->_ref['notDeletable'] ?? null;
         set {
-            $this->__set('notDeletable', $value);
+            $this->_ref['notDeletable'] = $value;
         }
     }
 
@@ -314,7 +317,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function notDeletable(bool $enabled = true): self
     {
-        $this->notDeletable = $enabled;
+        $this->_ref['notDeletable'] = $enabled;
 
         return $this;
     }
@@ -323,9 +326,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * If `true`, records in the table cannot be sorted.
      */
     public ?bool $notSortable {
-        get => $this->getNullableBool('notSortable');
+        get => $this->_ref['notSortable'] ?? null;
         set {
-            $this->__set('notSortable', $value);
+            $this->_ref['notSortable'] = $value;
         }
     }
 
@@ -334,7 +337,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function notSortable(bool $enabled = true): self
     {
-        $this->notSortable = $enabled;
+        $this->_ref['notSortable'] = $enabled;
 
         return $this;
     }
@@ -343,9 +346,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * If `true`, records in the table cannot be duplicated.
      */
     public ?bool $notCopyable {
-        get => $this->getNullableBool('notCopyable');
+        get => $this->_ref['notCopyable'] ?? null;
         set {
-            $this->__set('notCopyable', $value);
+            $this->_ref['notCopyable'] = $value;
         }
     }
 
@@ -354,7 +357,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function notCopyable(bool $enabled = true): self
     {
-        $this->notCopyable = $enabled;
+        $this->_ref['notCopyable'] = $enabled;
 
         return $this;
     }
@@ -363,9 +366,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * If `true`, records in the table cannot be created but can be duplicated.
      */
     public ?bool $notCreatable {
-        get => $this->getNullableBool('notCreatable');
+        get => $this->_ref['notCreatable'] ?? null;
         set {
-            $this->__set('notCreatable', $value);
+            $this->_ref['notCreatable'] = $value;
         }
     }
 
@@ -374,7 +377,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function notCreatable(bool $enabled = true): self
     {
-        $this->notCreatable = $enabled;
+        $this->_ref['notCreatable'] = $enabled;
 
         return $this;
     }
@@ -383,9 +386,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * Activates the “save and edit” button when a new record is added (sorting mode 4 only).
      */
     public ?bool $switchToEdit {
-        get => $this->getNullableBool('switchToEdit');
+        get => $this->_ref['switchToEdit'] ?? null;
         set {
-            $this->__set('switchToEdit', $value);
+            $this->_ref['switchToEdit'] = $value;
         }
     }
 
@@ -394,7 +397,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function switchToEdit(bool $enabled = true): self
     {
-        $this->switchToEdit = $enabled;
+        $this->_ref['switchToEdit'] = $enabled;
 
         return $this;
     }
@@ -403,9 +406,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * If `true`, Contao saves the old version of a record when a new version is created.
      */
     public ?bool $enableVersioning {
-        get => $this->getNullableBool('enableVersioning');
+        get => $this->_ref['enableVersioning'] ?? null;
         set {
-            $this->__set('enableVersioning', $value);
+            $this->_ref['enableVersioning'] = $value;
         }
     }
 
@@ -414,7 +417,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function enableVersioning(bool $enabled = true): self
     {
-        $this->enableVersioning = $enabled;
+        $this->_ref['enableVersioning'] = $enabled;
 
         return $this;
     }
@@ -423,9 +426,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * If `true`, the version dropdown is hidden.
      */
     public ?bool $hideVersionMenu {
-        get => $this->__get('hideVersionMenu');
+        get => $this->_ref['hideVersionMenu'] ?? null;
         set {
-            $this->__set('hideVersionMenu', $value);
+            $this->_ref['hideVersionMenu'] = $value;
         }
     }
 
@@ -434,7 +437,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function hideVersionMenu(bool $enabled = true): self
     {
-        $this->hideVersionMenu = $enabled;
+        $this->_ref['hideVersionMenu'] = $enabled;
 
         return $this;
     }
@@ -443,9 +446,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * If `true`, Contao will not duplicate records of the current table when a record of its parent table is duplicated.
      */
     public ?bool $doNotCopyRecords {
-        get => $this->__get('doNotCopyRecords');
+        get => $this->_ref['doNotCopyRecords'] ?? null;
         set {
-            $this->__set('doNotCopyRecords', $value);
+            $this->_ref['doNotCopyRecords'] = $value;
         }
     }
 
@@ -454,7 +457,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function doNotCopyRecords(bool $enabled = true): self
     {
-        $this->doNotCopyRecords = $enabled;
+        $this->_ref['doNotCopyRecords'] = $enabled;
 
         return $this;
     }
@@ -463,9 +466,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * If `true`, Contao will not delete records of the current table when a record of its parent table is deleted.
      */
     public ?bool $doNotDeleteRecords {
-        get => $this->__get('doNotDeleteRecords');
+        get => $this->_ref['doNotDeleteRecords'] ?? null;
         set {
-            $this->__set('doNotDeleteRecords', $value);
+            $this->_ref['doNotDeleteRecords'] = $value;
         }
     }
 
@@ -474,7 +477,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function doNotDeleteRecords(bool $enabled = true): self
     {
-        $this->doNotDeleteRecords = $enabled;
+        $this->_ref['doNotDeleteRecords'] = $enabled;
 
         return $this;
     }
@@ -483,9 +486,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * Optional query parameters for the backlink, e.g. `do=news`.
      */
     public ?string $backlink {
-        get => $this->__get('backlink');
+        get => $this->_ref['backlink'] ?? null;
         set {
-            $this->__set('backlink', $value);
+            $this->_ref['backlink'] = $value;
         }
     }
 
@@ -496,7 +499,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function backlink(?string $query = null): self
     {
-        $this->backlink = $query;
+        $this->_ref['backlink'] = $query;
 
         return $this;
     }
@@ -507,9 +510,9 @@ final class Config extends AbstractAccessor implements ConfigInterface
      * @since Contao 5.7
      */
     public ?bool $backendSearchIgnore {
-        get => $this->__get('backendSearchIgnore');
+        get => $this->_ref['backendSearchIgnore'] ?? null;
         set {
-            $this->__set('backendSearchIgnore', $value);
+            $this->_ref['backendSearchIgnore'] = $value;
         }
     }
 
@@ -520,33 +523,26 @@ final class Config extends AbstractAccessor implements ConfigInterface
      */
     public function backendSearchIgnore(bool $enabled = true): self
     {
-        $this->backendSearchIgnore = $enabled;
+        $this->_ref['backendSearchIgnore'] = $enabled;
 
         return $this;
     }
 
-    /**
-     * @todo find a better solution
-     */
-    public ConfigCallbacks $callbacks {
-        get => $this->callbacks ?? new ConfigCallbacks($this->_table);
-    }
-
     public Sql $sql {
-        get => $this->sql ?? new Sql($this->_table);
-        set(null|array|Sql|Closure $value) {
+        get => $this->sql ??= new Sql($this->_table);
+        set(array|Sql|Closure $value) {
             if ($value instanceof Sql) {
                 $this->sql = $value;
-                return;
             }
 
-            $this->sql ??= new Sql($this->_table);
+            if (is_array($value)) {
+                $this->_ref['sql'] = $value;
+            }
 
             if ($value instanceof Closure) {
+                $this->sql ??= new Sql($this->_table);
                 $this->sql->__invoke($value);
             }
-
-            $this->__set('sql', $value);
         }
     }
 
@@ -564,114 +560,121 @@ final class Config extends AbstractAccessor implements ConfigInterface
         return $this;
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $loadCallback {
-        get => $this->getNullableArray('onload_callback') ?? [];
+        get => $this->_ref['onload_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['onload_callback'][] = $value;
+            $this->_ref['onload_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $createCallback {
-        get => $this->getNullableArray('oncreate_callback') ?? [];
+        get => $this->_ref['oncreate_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['oncreate_callback'][] = $value;
+            $this->_ref['oncreate_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $beforeSubmitCallback {
-        get => $this->getNullableArray('onbeforesubmit_callback') ?? [];
+        get => $this->_ref['onbeforesubmit_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['onbeforesubmit_callback'][] = $value;
+            $this->_ref['onbeforesubmit_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $submitCallback {
-        get => $this->getNullableArray('onsubmit_callback') ?? [];
+        get => $this->_ref['onsubmit_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['onsubmit_callback'][] = $value;
+            $this->_ref['onsubmit_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $deleteCallback {
-        get => $this->getNullableArray('ondelete_callback') ?? [];
+        get => $this->_ref['ondelete_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['ondelete_callback'][] = $value;
+            $this->_ref['ondelete_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $cutCallback {
-        get => $this->getNullableArray('oncut_callback') ?? [];
+        get => $this->_ref['oncut_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['oncut_callback'][] = $value;
+            $this->_ref['oncut_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $copyCallback {
-        get => $this->getNullableArray('oncopy_callback') ?? [];
+        get => $this->_ref['oncopy_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['oncopy_callback'][] = $value;
+            $this->_ref['oncopy_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $createVersionCallback {
-        get => $this->getNullableArray('onversion_callback') ?? [];
+        get => $this->_ref['oncreate_version_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['onversion_callback'][] = $value;
+            $this->_ref['oncreate_version_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $restoreVersionCallback {
-        get => $this->getNullableArray('onrestore_callback') ?? [];
+        get => $this->_ref['onrestore_version_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['onrestore_callback'][] = $value;
+            $this->_ref['onrestore_version_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $undoCallback {
-        get => $this->getNullableArray('onundo_callback') ?? [];
+        get => $this->_ref['onundo_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['onundo_callback'][] = $value;
+            $this->_ref['onundo_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $invalidateCacheTagsCallback {
-        get => $this->getNullableArray('oninvalidatecache_tags_callback') ?? [];
+        get => $this->_ref['oninvalidatecache_tags_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['oninvalidatecache_tags_callback'][] = $value;
+            $this->_ref['oninvalidatecache_tags_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $showCallback {
-        get => $this->getNullableArray('onshow_callback') ?? [];
+        get => $this->_ref['onshow_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['onshow_callback'][] = $value;
+            $this->_ref['onshow_callback'][] = $value;
         }
     }
 
-    /** @mago-ignore analysis:mixed-array-assignment */
+    /** @mago-expect analysis:mixed-array-assignment */
     public array $paletteCallback {
-        get => $this->getNullableArray('onpalette_callback') ?? [];
+        get => $this->_ref['onpalette_callback'] ?? [];
         set(array|Closure $value) {
-            $GLOBALS['TL_DCA'][$this->_table]['config']['onpalette_callback'][] = $value;
+            $this->_ref['onpalette_callback'][] = $value;
         }
     }
 
+    /**
+     * @mago-expect analysis:mixed-array-assignment
+     * @mago-expect analysis:mixed-property-type-coercion
+     */
     public function __construct(string $table)
     {
+        $GLOBALS['TL_DCA'][$table]['config'] ??= [];
+
         $this->_table = $table;
         $this->_path = ['TL_DCA', $this->_table, 'config'];
+        $this->_ref = &$GLOBALS['TL_DCA'][$table]['config'];
     }
 
     public static function create(string $table): self
@@ -679,41 +682,8 @@ final class Config extends AbstractAccessor implements ConfigInterface
         return new static($table);
     }
 
-    #[Override]
-    public function __get(string $name): mixed
-    {
-        return $GLOBALS['TL_DCA'][$this->_table]['config'][$name] ?? null;
-    }
-
     /**
-     * @mago-expect analysis:mixed-array-assignment
-     */
-    #[Override]
-    public function __set(string $name, mixed $value): void
-    {
-        $GLOBALS['TL_DCA'][$this->_table]['config'][$name] = $value;
-    }
-
-    /**
-     * @mago-expect lint:no-isset
-     */
-    #[Override]
-    public function __isset(string $name): bool
-    {
-        return isset($GLOBALS['TL_DCA'][$this->_table]['config'][$name]);
-    }
-
-    /**
-     * @mago-expect analysis:mixed-array-access
-     */
-    #[Override]
-    public function __unset(string $name): void
-    {
-        unset($GLOBALS['TL_DCA'][$this->_table]['config'][$name]);
-    }
-
-    /**
-     * @param Closure(self $config, string $table): void $callback
+     * @param Closure(ConfigInterface $config, string $table): void $callback
      */
     #[Override]
     public function __invoke(Closure $callback): void
@@ -728,6 +698,6 @@ final class Config extends AbstractAccessor implements ConfigInterface
             $name = $name->value;
         }
 
-        $GLOBALS['TL_DCA'][$this->_table]['config'][$name][] = $callback;
+        $this->_ref[$name][] = $callback;
     }
 }

@@ -22,25 +22,57 @@ abstract class AbstractAccessor
      */
     abstract public array $_path { get; }
 
-    abstract public function __get(string $name): mixed;
+    abstract protected array $_ref { get; }
 
-    abstract public function __set(string $name, mixed $value): void;
+    public function __get(string $name): mixed
+    {
+        return $this->_ref[$name] ?? null;
+    }
 
-    abstract public function __isset(string $name): bool;
+    public function __set(string $name, mixed $value): void
+    {
+        $this->_ref[$name] = $value;
+    }
 
-    abstract public function __unset(string $name): void;
+    /** @mago-expect lint:no-isset */
+    public function __isset(string $name): bool
+    {
+        return isset($this->_ref[$name]);
+    }
+
+    /**
+     * @throws TypeError
+     * @deprecated Use _ref instead
+     */
+    protected function getNullableInt(string $name): ?int
+    {
+        /** @mago-expect analysis:mixed-assignment */
+        $value = $this->_ref[$name] ?? null;
+
+        if (null === $value || is_int($value)) {
+            return $value;
+        }
+
+        throw AccessorTypeError::for([...$this->_path, $name], '?int', $value);
+    }
+
+    public function __unset(string $name): void
+    {
+        unset($this->_ref[$name]);
+    }
 
     abstract public function __invoke(Closure $callback): void;
 
     /**
      * @throws TypeError
+     * @deprecated Use _ref instead
      */
     protected function getNullableString(string $name): ?string
     {
         /** @mago-expect analysis:mixed-assignment */
-        $value = $this->__get($name);
+        $value = $this->_ref[$name] ?? null;
 
-        if (is_null($value) || is_string($value)) {
+        if (null === $value || is_string($value)) {
             return $value;
         }
 
@@ -49,28 +81,14 @@ abstract class AbstractAccessor
 
     /**
      * @throws TypeError
-     */
-    protected function getNullableInt(string $name): ?int
-    {
-        /** @mago-expect analysis:mixed-assignment */
-        $value = $this->__get($name);
-
-        if (is_null($value) || is_int($value)) {
-            return $value;
-        }
-
-        throw AccessorTypeError::for([...$this->_path, $name], '?int', $value);
-    }
-
-    /**
-     * @throws TypeError
+     * @deprecated Use _ref instead
      */
     protected function getNullableBool(string $name): ?bool
     {
         /** @mago-expect analysis:mixed-assignment */
-        $value = $this->__get($name);
+        $value = $this->_ref[$name] ?? null;
 
-        if (is_null($value) || is_bool($value)) {
+        if (null === $value || is_bool($value)) {
             return $value;
         }
 
@@ -80,13 +98,14 @@ abstract class AbstractAccessor
     /**
      * @throws TypeError
      * @return array<array-key, mixed>|null
+     * @deprecated Use _ref instead
      */
     protected function getNullableArray(string $name): ?array
     {
         /** @mago-expect analysis:mixed-assignment */
-        $value = $this->__get($name);
+        $value = $this->_ref[$name] ?? null;
 
-        if (is_null($value) || is_array($value)) {
+        if (null === $value || is_array($value)) {
             return $value;
         }
 
