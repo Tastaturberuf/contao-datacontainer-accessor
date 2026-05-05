@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor;
 
-use TypeError;
+use function implode;
+use function is_array;
 
 final class SubPalettes
 {
@@ -27,25 +28,22 @@ final class SubPalettes
 
     public function __set(string $name, string|array $value): void
     {
-        if (is_string($value)) {
-            $this->_ref[$name] = $value;
-            return;
-        }
-
         if (is_array($value)) {
-            $this->_ref[$name] = implode(';', $value);
-            return;
+            $value = implode(';', $value);
         }
 
-        throw new TypeError(sprintf(
-            'The value for type can only be array or string, %s given',
-            get_debug_type($value),
-        ));
+        $this->_ref[$name] = $value;
     }
 
-    /** @mago-ignore analysis:mixed-return-statement */
+    /** @mago-expect analysis:mixed-return-statement */
     public function __get(string $name): ?string
     {
         return $this->_ref[$name] ?? null;
+    }
+
+    /** @mago-expect lint:no-isset */
+    public function __isset(string $name): bool
+    {
+        return isset($this->_ref[$name]);
     }
 }
