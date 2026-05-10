@@ -5,45 +5,82 @@ declare(strict_types=1);
 namespace Tastaturberuf\ContaoDataContainerAccessor;
 
 use BackedEnum;
-use Contao\DcaLoader;
+use Closure;
+use InvalidArgumentException;
 
 final class FieldBag
 {
+    public function __construct(
+        private readonly string $table,
+    ) {}
 
-    public array $all {
-        get => $GLOBALS['TL_DCA'][$this->table]['fields'] ?? [];
-    }
-
-
-    public function __construct(private readonly string $table)
+    public function __get(string|BackedEnum $name): Field
     {
-    }
+        $name = $this->parseFieldName($name);
 
-    public function new(string|BackedEnum $name): Field
-    {
         return $this->get($name);
+    }
+
+    /**
+     * @param array<array-key, string>|Closure(Field $field): void $value
+     * @throws InvalidArgumentException
+     */
+    public function __set(string $name, array|Closure $value): void
+    {
+        if (!is_array($value) && !$value instanceof Closure) {
+            throw new InvalidArgumentException(
+                'The dynamic property "'
+                . $name
+                . '" value must be an array or a Closure. '
+                . gettype($value)
+                . ' given.',
+            );
+        }
+
+        $this->add($name, $value);
+    }
+
+    public function __isset(string $name): bool
+    {
+        return isset($GLOBALS['TL_DCA'][$this->table]['fields'][$name]);
+    }
+
+    /**
+     * @return \Generator<string, Field>
+     */
+    public function all(): \Generator
+    {
+        foreach (array_keys($GLOBALS['TL_DCA'][$this->table]['fields'] ?? []) as $name) {
+            yield $name => $this->get($name);
+        }
+
     }
 
     public function get(string|BackedEnum $name): Field
     {
-        return $this->add($name);
+        $name = $this->parseFieldName($name);
+
+        return new Field($this->table, $name);
     }
 
-    public function add(string|BackedEnum $name, null|callable|array $callback = null): Field
+    /**
+     * Add a new field to the data container
+     */
+    public function add(string|BackedEnum $name, null|array|Closure $callback = null): self
     {
         $name = $this->parseFieldName($name);
 
         $field = new Field($this->table, $name);
 
         if (is_array($callback)) {
-            return $field->setArray($callback);
+            $field->setArray($callback);
         }
 
-        if (is_callable($callback)) {
+        if ($callback instanceof Closure) {
             $callback($field, $name, $this->table);
         }
 
-        return $field;
+        return $this;
     }
 
     public function has(string|BackedEnum $name): bool
@@ -63,17 +100,27 @@ final class FieldBag
     /**
      * Copy a field from another table and optionally rename it.
      */
-    public function copy(string $table, string|BackedEnum $name, null|string|BackedEnum $newName = null, null|callable|array $callback = null): Field
-    {
+    public function copy(
+        string $table,
+        string|BackedEnum $name,
+        null|string|BackedEnum $newName = null,
+        null|array|Closure $callback = null,
+    ): Field {
         $name = $this->parseFieldName($name);
         $newName = $newName ? $this->parseFieldName($newName) : $name;
 
         new DcaLoader($table)->load();
 
         if (!isset($GLOBALS['TL_DCA'][$table]['fields'][$name])) {
-            throw new \InvalidArgumentException(
-                sprintf("Field '%s' does not exist in table '%s'.", $name, $table)
-            );
+            throw new InvalidArgumentException(sprintf("Field '%s' does not exist in table '%s'.", $name, $table));
+        }
+
+        if (!is_array($GLOBALS['TL_DCA'][$table]['fields'][$name])) {
+            throw new InvalidArgumentException(sprintf(
+                "Field '%s' is not an array. Got '%s'.",
+                $name,
+                gettype($GLOBALS['TL_DCA'][$this->table]['fields'][$name]),
+            ));
         }
 
         $fieldArray = $GLOBALS['TL_DCA'][$table]['fields'][$name];
@@ -87,7 +134,7 @@ final class FieldBag
 
         $field = new Field($this->table, $newName);
 
-        if (is_callable($callback)) {
+        if ($callback instanceof Closure) {
             $callback($field, $newName, $this->table);
         }
 
@@ -97,18 +144,20 @@ final class FieldBag
     /**
      * Copy a field from the same table and rename it.
      */
-    public function duplicate(string|BackedEnum $name, string|BackedEnum $newName, null|callable|array $callback = null): Field
-    {
+    public function duplicate(
+        string|BackedEnum $name,
+        string|BackedEnum $newName,
+        null|array|Closure $callback = null,
+    ): Field {
         return $this->copy($this->table, $name, $newName, $callback);
     }
 
     private function parseFieldName(string|BackedEnum $name): string
     {
         if ($name instanceof BackedEnum) {
-            return $name->value;
+            return (string) $name->value;
         }
 
         return $name;
     }
-
 }
