@@ -4,150 +4,259 @@ declare(strict_types=1);
 
 namespace Tastaturberuf\ContaoDataContainerAccessor;
 
+use Closure;
+use Override;
+use Tastaturberuf\ContaoDataContainerAccessor\Callback\SortingCallback;
+use Tastaturberuf\ContaoDataContainerAccessor\Contracts\SortingInterface;
+
 /**
  * @see https://docs.contao.org/dev/reference/dca/list/#sorting
+ *
+ * @mago-expect analysis:mixed-return-statement
+ * @mago-expect analysis:incompatible-property-access
+ * @mago-expect analysis:incompatible-readonly-modifier
  */
-final class Sorting
+final class Sorting extends AbstractAccessor implements SortingInterface
 {
+    public readonly string $_table;
+    public readonly array $_path;
+    protected array $_ref;
 
-    public int $mode {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['mode'] ?? 0;
+    public ?int $mode {
+        get => $this->_ref['mode'] ?? null;
         set {
-            $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['mode'] = $value;
+            $this->_ref['mode'] = $value;
         }
     }
 
-    public int $flag {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['flag'] ?? 0;
+    public function mode(int $mode): self
+    {
+        $this->mode = $mode;
+
+        return $this;
+    }
+
+    public ?int $flag {
+        get => $this->_ref['flag'] ?? null;
         set {
-            $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['flag'] = $value;
+            $this->_ref['flag'] = $value;
         }
+    }
+
+    public function flag(int $flag): self
+    {
+        $this->flag = $flag;
+
+        return $this;
     }
 
     public ?string $panelLayout {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['panelLayout'] ?? null;
+        get => $this->_ref['panelLayout'] ?? null;
         set {
-            $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['panelLayout'] = $value;
+            $this->_ref['panelLayout'] = $value;
         }
     }
 
-    public array $fields {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['fields'] ?? [];
+    public function panelLayout(string $panelLayout): self
+    {
+        $this->panelLayout = $panelLayout;
+
+        return $this;
+    }
+
+    public ?array $fields {
+        get => $this->_ref['fields'] ?? null;
         set {
-            $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['fields'] = $value;
+            $this->_ref['fields'] = $value;
         }
     }
 
-    public array $headerFields {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['headerFields'] ?? [];
+    public function fields(string ...$fields): self
+    {
+        $this->fields = $fields;
+
+        return $this;
+    }
+
+    public ?array $headerFields {
+        get => $this->_ref['headerFields'] ?? null;
         set {
-            $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['headerFields'] = $value;
+            $this->_ref['headerFields'] = $value;
         }
+    }
+
+    public function headerFields(array $headerFields): self
+    {
+        $this->headerFields = $headerFields;
+
+        return $this;
     }
 
     public ?string $icon {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['icon'] ?? null;
+        get => $this->_ref['icon'] ?? null;
         set {
-            $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['icon'] = $value;
+            $this->_ref['icon'] = $value;
         }
     }
 
-    public array $rootElements {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['rootElements'] ?? [];
+    public function icon(string $icon): self
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    public ?array $rootElements {
+        get => $this->_ref['rootElements'] ?? null;
         set {
-            $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['rootElements'] = $value;
+            $this->_ref['rootElements'] = $value;
         }
     }
 
-    public bool $rootPaste {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['rootPaste'] ?? false;
+    public function rootElements(array $rootElements): self
+    {
+        $this->rootElements = $rootElements;
+
+        return $this;
+    }
+
+    public ?bool $rootPaste {
+        get => $this->_ref['rootPaste'] ?? null;
         set {
-            $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['rootPaste'] = $value;
+            $this->_ref['rootPaste'] = $value;
         }
+    }
+
+    public function rootPaste(bool $rootPaste = true): self
+    {
+        $this->rootPaste = $rootPaste;
+
+        return $this;
     }
 
     //@todo test sub arrays
-    public array $filter {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['filter'] ?? [];
+    public ?array $filter {
+        get => $this->_ref['filter'] ?? null;
         set {
-            $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['filter'] = $value;
+            $this->_ref['filter'] = $value;
         }
     }
 
-    public bool $disableGrouping {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['disableGrouping'] ?? false;
+    public function filter(array $filter): self
+    {
+        $this->filter = $filter;
+
+        return $this;
+    }
+
+    public ?bool $disableGrouping {
+        get => $this->_ref['disableGrouping'] ?? null;
         set {
-            $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['disableGrouping'] = $value;
+            $this->_ref['disableGrouping'] = $value;
         }
+    }
+
+    public function disableGrouping(bool $disableGrouping = true): self
+    {
+        $this->disableGrouping = $disableGrouping;
+
+        return $this;
     }
 
     public ?string $defaultSearchField {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['defaultSearchField'] ?? null;
+        get => $this->_ref['defaultSearchField'] ?? null;
         set {
-            $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['defaultSearchField'] = $value;
+            $this->_ref['defaultSearchField'] = $value;
         }
     }
 
-
-    /**
-     * These functions will be called instead of displaying the default paste buttons.
-     * @todo test array is a callable
-     */
-    public null|\Closure|array $paste_button_callback {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['paste_button_callback'] ?? null;
-        set {
-            if (is_callable($value) || null === $value) {
-                $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['paste_button_callback'] = $value;
-            }
-
-            throw new \InvalidArgumentException('The paste_button_callback must be a callable or null.');
-        }
-
-    }
-
-    /**
-     * These functions must be specified to render the child elements (sorting mode 4 only).
-     */
-    public null|\Closure|array $child_record_callback {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['child_record_callback'] ?? null;
-        set {
-            if (is_callable($value) || null === $value) {
-                $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['child_record_callback'] = $value;
-            }
-
-            throw new \InvalidArgumentException('The child_record_callback must be a callable or null.');
-        }
-    }
-
-    public null|\Closure|array $header_callback {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['header_callback'] ?? null;
-        set {
-            if (is_callable($value) || null === $value) {
-                $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['header_callback'] = $value;
-            }
-
-            throw new \InvalidArgumentException('The header_callback must be a callable or null.');
-        }
-    }
-
-    public null|\Closure|array $panel_callback {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['panel_callback'] ?? null;
-        set {
-            if (is_callable($value) || null === $value) {
-                $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['panel_callback'] = $value;
-            }
-
-            throw new \InvalidArgumentException('The panel_callback must be a callable or null.');
-        }
-    }
-
-    public string $child_record_class {
-        get => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['child_record_class'] ?? '';
-        set => $GLOBALS['TL_DCA'][$this->table]['config']['sorting']['child_record_class'] = $value;
-    }
-
-    public function __construct(private readonly string $table)
+    public function defaultSearchField(string $defaultSearchField): self
     {
+        $this->defaultSearchField = $defaultSearchField;
+
+        return $this;
     }
 
+    public ?string $childRecordClass {
+        get => $this->_ref['child_record_class'] ?? null;
+        set {
+            $this->_ref['child_record_class'] = $value;
+        }
+    }
+
+    public function childRecordClass(string $childRecordClass): self
+    {
+        $this->childRecordClass = $childRecordClass;
+
+        return $this;
+    }
+
+    public SortingCallbacks $callbacks {
+        get => $this->sortingCallbacks ??= new SortingCallbacks($this->_table);
+    }
+
+    public null|array|Closure $pasteButtonCallback {
+        get => $this->_ref['paste_button_callback'] ?? null;
+        set {
+            $this->_ref['paste_button_callback'] = $value;
+        }
+    }
+
+    public null|array|Closure $childRecordCallback {
+        get => $this->_ref['child_record_callback'] ?? null;
+        set {
+            $this->_ref['child_record_callback'] = $value;
+        }
+    }
+
+    public null|array|Closure $headerCallback {
+        get => $this->_ref['header_callback'] ?? null;
+        set {
+            $this->_ref['header_callback'] = $value;
+        }
+    }
+
+    public null|array|Closure $panelRecordCallback {
+        get => $this->_ref['panel_callback'] ?? null;
+        set {
+            $this->_ref['panel_callback'] = $value;
+        }
+    }
+
+    /**
+     * @mago-expect analysis:mixed-array-assignment
+     * @mago-expect lint:no-global
+     * @mago-expect analysis:mixed-property-type-coercion
+     */
+    public function __construct(string $table)
+    {
+        $GLOBALS['TL_DCA'][$table]['list']['sorting'] ??= [];
+
+        $this->_table = $table;
+        $this->_path = ['TL_DCA', $table, 'list', 'sorting'];
+        $this->_ref = &$GLOBALS['TL_DCA'][$table]['list']['sorting'];
+    }
+
+    public static function create(string $table): self
+    {
+        return new static($table);
+    }
+
+    /**
+     * @param Closure(SortingInterface $sorting, string $table): void $callback
+     */
+    #[Override]
+    public function __invoke(Closure $callback): void
+    {
+        $callback($this, $this->_table);
+    }
+
+    public function addCallback(string|SortingCallback $name, Closure $callback): void
+    {
+        if ($name instanceof SortingCallback) {
+            $name = $name->value;
+        }
+
+        $GLOBALS['TL_DCA'][$this->_table]['list']['sorting'][$name] = $callback;
+    }
 }
