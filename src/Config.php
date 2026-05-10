@@ -18,7 +18,7 @@ use function is_array;
  * @mago-expect analysis:incompatible-property-access
  * @mago-expect analysis:mixed-return-statement
  */
-final class Config extends AbstractAccessor implements ConfigInterface
+class Config extends AbstractAccessor implements ConfigInterface
 {
     public readonly string $_table;
     public readonly array $_path;
@@ -667,6 +667,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
     /**
      * @mago-expect analysis:mixed-array-assignment
      * @mago-expect analysis:mixed-property-type-coercion
+     * @mago-expect lint:no-global
      */
     public function __construct(string $table)
     {
@@ -679,7 +680,7 @@ final class Config extends AbstractAccessor implements ConfigInterface
 
     public static function create(string $table): self
     {
-        return new static($table);
+        return new self($table);
     }
 
     /**
@@ -692,12 +693,15 @@ final class Config extends AbstractAccessor implements ConfigInterface
     }
 
     /** @mago-expect analysis:mixed-array-assignment */
-    public function addCallback(string|ConfigCallback $name, Closure $callback): void
+    public function addCallback(string|ConfigCallback $name, Closure $callback): self
     {
         if ($name instanceof ConfigCallback) {
-            $name = $name->value;
+            $name->create($this->_table, $callback);
+            return $this;
         }
 
         $this->_ref[$name][] = $callback;
+
+        return $this;
     }
 }

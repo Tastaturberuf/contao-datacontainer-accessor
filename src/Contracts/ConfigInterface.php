@@ -19,6 +19,9 @@ interface ConfigInterface
 
     /**
      * Name of the related parent table `table.pid = ptable.id`.
+     *
+     *     $this->ptable = 'ptable';
+     *     $this->ptable = null;
      */
     public ?string $ptable { get; set; }
 
@@ -156,4 +159,9 @@ interface ConfigInterface
     public array $showCallback { get; set(array|Closure $callback); }
 
     public array $paletteCallback { get; set(array|Closure $callback); }
+
+    /**
+     * @param Closure(ConfigInterface $config, string $table): void $callback
+     */
+    public function __invoke(Closure $callback): void;
 }

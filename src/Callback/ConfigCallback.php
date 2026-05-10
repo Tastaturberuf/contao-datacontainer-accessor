@@ -15,8 +15,8 @@ enum ConfigCallback: string
     case Delete = 'ondelete_callback';
     case Cut = 'oncut_callback';
     case Copy = 'oncopy_callback';
-    case CreateVersion = 'onversion_callback';
-    case RestoreVersion = 'onrestore_callback';
+    case CreateVersion = 'oncreate_version_callback';
+    case RestoreVersion = 'onrestore_version_callback';
     case Undo = 'onundo_callback';
     case InvalidateCacheTags = 'oninvalidatecache_tags_callback';
     case Show = 'onshow_callback';

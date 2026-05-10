@@ -68,6 +68,8 @@ final class ConfigTest extends TestCase
     {
         $config = new Config('tl_test');
 
+        static::assertPropertyIsVirtual($config, 'label');
+
         // test default value
         static::assertNull($config->label);
         // test the key was not initialized
