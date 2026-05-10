@@ -11,6 +11,7 @@ use Tastaturberuf\ContaoDataContainerAccessor\Contracts\LabelInterface;
 
 /**
  * @see https://docs.contao.org/dev/reference/dca/list/#labels
+ * @mago-expect analysis:mixed-return-statement
  * @mago-expect analysis:incompatible-property-access
  * @mago-expect analysis:incompatible-readonly-modifier
  */
@@ -24,7 +25,7 @@ final class Label extends AbstractAccessor implements LabelInterface
      * One or more fields that will be shown in the list (e.g. ['title', 'user_id:tl_user.name']).
      */
     public ?array $fields {
-        get => $this->getNullableArray('fields');
+        get => $this->_ref['fields'] ?? null;
         set {
             $this->_ref['fields'] = $value;
         }
@@ -44,7 +45,7 @@ final class Label extends AbstractAccessor implements LabelInterface
      * If true, Contao will generate a table header with column names (e.g. back end member list)
      */
     public ?bool $showColumns {
-        get => $this->getNullableBool('showColumns');
+        get => $this->_ref['showColumns'] ?? null;
         set {
             $this->_ref['showColumns'] = $value;
         }
@@ -53,9 +54,9 @@ final class Label extends AbstractAccessor implements LabelInterface
     /**
      * If true, Contao will generate a table header with column names (e.g. back end member list)
      */
-    public function showColumns(bool $showColumns = true, ?array $fields = null): self
+    public function showColumns(bool $enabled = true, ?array $fields = null): self
     {
-        $this->showColumns = $showColumns;
+        $this->showColumns = $enabled;
 
         if ($fields) {
             $this->fields = $fields;
@@ -68,7 +69,7 @@ final class Label extends AbstractAccessor implements LabelInterface
      * If false, Contao will not force the first sorting field to show up in the list. (default: true)
      */
     public ?bool $showFirstOrderBy {
-        get => $this->getNullableBool('showFirstOrderBy');
+        get => $this->_ref['showFirstOrderBy'] ?? null;
         set {
             $this->_ref['showFirstOrderBy'] = $value;
         }
@@ -88,7 +89,7 @@ final class Label extends AbstractAccessor implements LabelInterface
      * HTML string used to format the fields that will be shown (e.g. `%s (%s)`).
      */
     public ?string $format {
-        get => $this->getNullableString('format');
+        get => $this->_ref['format'] ?? null;
         set {
             $this->_ref['format'] = $value;
         }
@@ -113,7 +114,7 @@ final class Label extends AbstractAccessor implements LabelInterface
      * The maximum number of characters to show in the list. (default: null)
      */
     public ?int $maxCharacters {
-        get => $this->getNullableInt('maxCharacters');
+        get => $this->_ref['maxCharacters'] ?? null;
         set {
             $this->_ref['maxCharacters'] = $value;
         }
@@ -128,7 +129,7 @@ final class Label extends AbstractAccessor implements LabelInterface
 
     /** @mago-expect analysis:mixed-return-statement */
     public null|array|Closure $groupCallback {
-        get => $this->__get('group_callback');
+        get => $this->_ref['group_callback'] ?? null;
         set {
             $this->_ref['group_callback'] = $value;
         }
@@ -136,7 +137,7 @@ final class Label extends AbstractAccessor implements LabelInterface
 
     /** @mago-expect analysis:mixed-return-statement */
     public null|array|Closure $labelCallback {
-        get => $this->__get('label_callback');
+        get => $this->_ref['label_callback'] ?? null;
         set {
             $this->_ref['label_callback'] = $value;
         }
@@ -149,7 +150,7 @@ final class Label extends AbstractAccessor implements LabelInterface
      */
     public function __construct(string $table)
     {
-        $GLOBALS['TL_DCA'][$this->_table]['list']['label'] ??= [];
+        $GLOBALS['TL_DCA'][$table]['list']['label'] ??= [];
         $this->_table = $table;
         $this->_path = ['TL_DCA', $this->_table, 'list', 'label'];
         $this->_ref = &$GLOBALS['TL_DCA'][$this->_table]['list']['label'];
@@ -161,7 +162,7 @@ final class Label extends AbstractAccessor implements LabelInterface
     }
 
     /**
-     * @param Closure(Label $Label, string $table): void $callback
+     * @param Closure(LabelInterface $Label, string $table): void $callback
      */
     #[Override]
     public function __invoke(Closure $callback): void
