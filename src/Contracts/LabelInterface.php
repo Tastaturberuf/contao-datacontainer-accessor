@@ -41,4 +41,6 @@ interface LabelInterface
     public null|array|Closure $groupCallback { get; set; }
 
     public null|array|Closure $labelCallback { get; set; }
+
+    public function __invoke(Closure $callback): void;
 }
