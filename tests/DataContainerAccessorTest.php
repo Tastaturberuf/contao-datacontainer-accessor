@@ -30,9 +30,8 @@ final class DataContainerAccessorTest extends TestCase
 
         static::assertInstanceOf(DataContainerAccessor::class, $dca);
 
-        $dca2 = DataContainerAccessor::create('tl_test');
-
-        static::assertSame($dca, $dca2);
+        static::assertSame(DataContainerAccessor::create('tl_test'), DataContainerAccessor::create('tl_test'));
+        static::assertNotSame(DataContainerAccessor::create('tl_test'), DataContainerAccessor::create('tl_example'));
     }
 
     public function testConfigProperty(): void
