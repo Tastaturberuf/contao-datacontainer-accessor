@@ -6,6 +6,7 @@ namespace Tastaturberuf\ContaoDataContainerAccessor\Tests;
 
 use Error;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Tastaturberuf\ContaoDataContainerAccessor\Callback\LabelCallback;
 use Tastaturberuf\ContaoDataContainerAccessor\Config;
 use Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigInterface;
 use Tastaturberuf\ContaoDataContainerAccessor\DataContainerAccessor;
@@ -21,6 +22,17 @@ final class DataContainerAccessorTest extends TestCase
         $dca = new DataContainerAccessor('tl_test');
 
         static::assertSame('tl_test', $dca->_table);
+    }
+
+    public function testCreateMethod(): void
+    {
+        $dca = DataContainerAccessor::create('tl_test');
+
+        static::assertInstanceOf(DataContainerAccessor::class, $dca);
+
+        $dca2 = DataContainerAccessor::create('tl_test');
+
+        static::assertSame($dca, $dca2);
     }
 
     public function testConfigProperty(): void
@@ -144,5 +156,14 @@ final class DataContainerAccessorTest extends TestCase
 
         $this->expectException(Error::class);
         $dca->fields = new FieldBag('tl_test');
+    }
+
+    public function testAddCallback(): void
+    {
+        $dca = new DataContainerAccessor('tl_test');
+
+        $returned = $dca->addCallback(LabelCallback::Group, fn() => true);
+
+        static::assertSame($dca, $returned);
     }
 }

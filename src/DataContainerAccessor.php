@@ -11,8 +11,11 @@ use Tastaturberuf\ContaoDataContainerAccessor\Callback\LabelCallback;
 use Tastaturberuf\ContaoDataContainerAccessor\Callback\SortingCallback;
 use Tastaturberuf\ContaoDataContainerAccessor\Contracts\ConfigInterface;
 use Tastaturberuf\ContaoDataContainerAccessor\Contracts\LabelInterface;
-use TypeError;
+use Tastaturberuf\ContaoDataContainerAccessor\Contracts\SortingInterface;
 
+/**
+ * @mago-expect lint:no-global
+ */
 final class DataContainerAccessor
 {
     public readonly string $_table;
@@ -61,23 +64,28 @@ final class DataContainerAccessor
         return $this;
     }
 
-    public Sorting $sorting {
+    public SortingInterface $sorting {
         get => $this->sorting ??= new Sorting($this->_table);
-        set(Closure|Sorting $value) {
-            if (!$value instanceof Closure) {
-                throw new TypeError('You can only set a Closure here');
+        /**
+         * @param SortingInterface|Closure(SortingInterface $sorting, string $table): void $callback
+         */
+        set(SortingInterface|Closure $callback) {
+            if ($callback instanceof SortingInterface) {
+                $this->sorting = $callback;
+                return;
             }
 
-            $this->sorting($value);
+            $this->sorting ??= new Sorting($this->_table);
+            $this->sorting->__invoke($callback);
         }
     }
 
     /**
-     * @param Closure(Sorting $sorting, string $table): void $callback
+     * @param Closure(SortingInterface $sorting, string $table): void $callback
      */
     public function sorting(Closure $callback): self
     {
-        $callback($this->sorting, $this->_table);
+        $this->sorting->__invoke($callback);
 
         return $this;
     }
@@ -93,7 +101,8 @@ final class DataContainerAccessor
                 return;
             }
 
-            $this->label($value);
+            $this->label ??= new Label($this->_table);
+            $this->label->__invoke($value);
         }
     }
 
@@ -174,21 +183,25 @@ final class DataContainerAccessor
         return $GLOBALS['TL_DCA'][$this->_table][$name] ?? null;
     }
 
+    /** @mago-expect analysis:mixed-array-assignment */
     public function __set(string $name, mixed $value): void
     {
         $GLOBALS['TL_DCA'][$this->_table][$name] = $value;
     }
 
+    /** @mago-ignore lint:no-isset */
     public function __isset(string $name): bool
     {
         return isset($GLOBALS['TL_DCA'][$this->_table][$name]);
     }
 
+    /** @mago-ignore analysis:mixed-array-access */
     public function __unset(string $name): void
     {
         unset($GLOBALS['TL_DCA'][$this->_table][$name]);
     }
 
+    /** @mago-ignore analysis:mixed-array-assignment */
     public function __call(string $name, array $arguments): self
     {
         $GLOBALS['TL_DCA'][$this->_table][$name] = $arguments[0];
@@ -198,34 +211,14 @@ final class DataContainerAccessor
 
     public static function create(string $table): self
     {
-        return new self($table);
+        static $instances = [];
+
+        return $instances[$table] ??= new static($table);
     }
 
-    public function addCallback(string|ConfigCallback|SortingCallback|LabelCallback $name, Closure $callback): self
+    public function addCallback(ConfigCallback|SortingCallback|LabelCallback $name, Closure $callback): self
     {
-        match ($name) {
-            'config.oncreate',
-            ConfigCallback::Create,
-                => $GLOBALS['TL_DCA'][$this->_table]['config']['oncreate_callback'][] = $callback,
-            'config.onload', ConfigCallback::Load => $GLOBALS['TL_DCA'][$this->_table]['config']['onload_callback'][] =
-                $callback,
-            'config.onsubmit',
-            ConfigCallback::Submit,
-                => $GLOBALS['TL_DCA'][$this->_table]['config']['onsubmit_callback'][] = $callback,
-            default => $GLOBALS['TL_DCA'][$this->_table]['config'][$name->value ?? $name][] = $callback,
-        };
-
-        if ($name instanceof ConfigCallback) {
-            $GLOBALS['TL_DCA'][$this->_table]['config'][$name->value][] = $callback;
-        }
-
-        if ($name instanceof SortingCallback) {
-            $GLOBALS['TL_DCA'][$this->_table]['list']['sorting'][$name->value] = $name;
-        }
-
-        if ($name instanceof LabelCallback) {
-            $GLOBALS['TL_DCA'][$this->_table]['list']['label'][$name->value] = $name;
-        }
+        $name->create($this->_table, $callback);
 
         return $this;
     }
